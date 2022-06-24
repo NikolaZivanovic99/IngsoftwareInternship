@@ -12,7 +12,6 @@ namespace MovieLibrary.Web.Controllers
         {
             _service = service;
         }
-
         public IActionResult Index()
         {
             return View(_service.GetMovies());
@@ -26,7 +25,7 @@ namespace MovieLibrary.Web.Controllers
         [HttpPost]
         public IActionResult Create(Movie movie)
         {
-            Movie back = _service.AddMovie(movie);
+            _service.AddMovie(movie);
             return RedirectToAction("Index");
         }
 
@@ -36,12 +35,12 @@ namespace MovieLibrary.Web.Controllers
 
             return View(movie);
         }
+
         [HttpPost]
         public IActionResult Edit(Movie movie)
         {
-            Movie movieFromDataBase = _service.UpdateMovie(movie);
+            _service.UpdateMovie(movie);
             return RedirectToAction("Index");
-
         }
 
         public IActionResult Details(int id)
@@ -49,13 +48,13 @@ namespace MovieLibrary.Web.Controllers
             Movie movie = _service.GetMovie(id);
             return View(movie);
         }
-
-        
+    
         public IActionResult Delete(int id)
         {
             Movie movie = _service.GetMovie(id);
             return View(movie);
         }
+
         [HttpPost]
         public IActionResult Delete(int? id) 
         {

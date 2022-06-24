@@ -25,17 +25,11 @@
                 @Html.DisplayNameFor(model => model.Address)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Idnumber)
+                @Html.DisplayNameFor(model => model.IdNumber)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Occupation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InsertDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeleteDate)
-            </th>
+            </th>        
             <th></th>
         </tr>
     </thead>
@@ -55,16 +49,10 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Idnumber)
+                @Html.DisplayFor(modelItem => item.IdNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Occupation.Caption)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InsertDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeleteDate)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new {  id=item.UserId}) |

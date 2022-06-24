@@ -57,7 +57,7 @@ namespace MovieLibrary.Data.Models
 
                 entity.Property(e => e.FirstName).HasMaxLength(50);
 
-                entity.Property(e => e.Idnumber)
+                entity.Property(e => e.IdNumber)
                     .HasMaxLength(50)
                     .HasColumnName("IDNumber");
 

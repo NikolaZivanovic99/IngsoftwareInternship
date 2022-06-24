@@ -2,59 +2,51 @@
 using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MovieLibrary.Business.Service
 {
     public class MovieService : IMovieService
     {
-        MoviesDataBaseContext _context;
-
+        private readonly MoviesDataBaseContext _context;
         public MovieService(MoviesDataBaseContext context)
         {
            _context = context;
         }
-
-        public Movie AddMovie(Movie movie)
+        public void AddMovie(Movie movie)
         {
+            movie.InsertDate = DateTime.Now;
             _context.Movies.Add(movie);
             _context.SaveChanges();
-            return movie;
         }
-
         public void DeleteMovie(int? id)
         {
             Movie movie = _context.Movies.Find(id);
-            _context.Movies.Remove(movie);
+            movie.DeleteDate = DateTime.Now;
             _context.SaveChanges();
         }
-
         public Movie GetMovie(int id)
         {
             Movie movie = _context.Movies.Find(id);
+            if (movie == null || movie.DeleteDate !=null)
+            {
+                return null;
+            }
             return movie;
         }
 
         public List<Movie> GetMovies() 
         {
-            List<Movie> movies = _context.Movies.ToList();
-            return movies;
+            return _context.Movies.Where(x=> x.DeleteDate ==null).ToList();
         }
-
-        public Movie UpdateMovie(Movie movie)
+        public void UpdateMovie(Movie movie)
         {
             Movie movieFromDataBase = _context.Movies.Find(movie.MovieId);
             movieFromDataBase.Caption = movie.Caption;
             movieFromDataBase.ReleaseYear = movie.ReleaseYear;
             movieFromDataBase.SubmittedBy = movie.SubmittedBy;
-            movieFromDataBase.InsertDate = movie.InsertDate;
-            movieFromDataBase.DeleteDate = movie.DeleteDate;
+            movieFromDataBase.InsertDate = DateTime.Now;
 
             _context.SaveChanges();
-            return movie;
-
         }
     }
 }

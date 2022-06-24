@@ -9,7 +9,7 @@ namespace MovieLibrary.Data.Models
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string Address { get; set; } = null!;
-        public string Idnumber { get; set; } = null!;
+        public string IdNumber { get; set; } = null!;
         public int OccupationId { get; set; }
         public DateTime InsertDate { get; set; }
         public DateTime? DeleteDate { get; set; }

@@ -1,4 +1,6 @@
-﻿@model MovieLibrary.Data.Models.User
+﻿@using MovieLibrary.Data.Models
+@model MovieLibrary.Data.Models.User
+
 
 @{
     ViewData["Title"] = "Create";
@@ -29,24 +31,20 @@
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Idnumber" class="control-label"></label>
-                <input asp-for="Idnumber" class="form-control" />
-                <span asp-validation-for="Idnumber" class="text-danger"></span>
+                <label asp-for="IdNumber" class="control-label"></label>
+                <input asp-for="IdNumber" class="form-control" />
+                <span asp-validation-for="IdNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="OccupationId" class="control-label"></label>
-                <input asp-for="OccupationId" class="form-control" />
+                <select name="OccupationId" id="OccupationId" class="form-control">
+                    @foreach( Occupation item in ViewBag.Occupations)
+                    {
+                        <option value=@item.OccupationId>@item.Caption</option>
+                    }
+
+                </select>
                 <span asp-validation-for="OccupationId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="InsertDate" class="control-label"></label>
-                <input asp-for="InsertDate" class="form-control" />
-                <span asp-validation-for="InsertDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DeleteDate" class="control-label"></label>
-                <input asp-for="DeleteDate" class="form-control" />
-                <span asp-validation-for="DeleteDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -59,6 +57,4 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+

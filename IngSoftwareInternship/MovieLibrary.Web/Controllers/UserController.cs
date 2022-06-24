@@ -20,24 +20,30 @@ namespace MovieLibrary.Web.Controllers
 
         public IActionResult Create()
         {
+            List<Occupation> occupations = _service.GetOccupations();
+            ViewBag.Occupations = occupations;
             return View();
         }
+
         [HttpPost]
         public IActionResult Create(User user)
         {
-            User userBack = _service.AddUser(user);
+            _service.AddUser(user);
             return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int id)
         {
             User user = _service.GetUser(id);
+            List<Occupation> occupations = _service.GetOccupations();
+            ViewBag.Occupations = occupations;
             return View(user);
         }
+
         [HttpPost]
         public IActionResult Edit(User user)
         {
-            User userBack = _service.UpdateUser(user);
+            _service.UpdateUser(user);
             return RedirectToAction("Index");
         }
 
@@ -46,11 +52,13 @@ namespace MovieLibrary.Web.Controllers
             User user = _service.GetUser(id);
             return View(user);
         }
+
         public IActionResult Delete(int id)
         {
             User user = _service.GetUser(id);
             return View(user);
         }
+
         [HttpPost]
         public IActionResult Delete(int? id)
         {
