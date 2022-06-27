@@ -1,5 +1,5 @@
-﻿@using MovieLibrary.Data.Models
-@model MovieLibrary.Data.Models.User
+﻿@using MovieLibrary.Business.ViewModel
+@model MovieLibrary.Business.ViewModel.UserViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -41,7 +41,7 @@
              <div class="form-group">
                 <label asp-for="OccupationId" class="control-label"></label>
                 <select name="OccupationId" id="OccupationId" class="form-control">
-                    @foreach( Occupation item in ViewBag.Occupations)
+                    @foreach( OccupationViewModel item in ViewBag.Occupations)
                     {
                         <option value=@item.OccupationId>@item.Caption</option>
                     }

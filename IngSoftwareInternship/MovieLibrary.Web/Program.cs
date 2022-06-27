@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MovieLibrary.Business.Mapping;
 using MovieLibrary.Business.Service;
 using MovieLibrary.Business.ServiceInterface;
 using MovieLibrary.Data.Models;
@@ -16,6 +18,13 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddDbContext<MoviesDataBaseContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("dbconn")));
 
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 

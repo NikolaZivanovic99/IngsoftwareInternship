@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.Business.Service;
 using MovieLibrary.Business.ServiceInterface;
+using MovieLibrary.Business.ViewModel;
 using MovieLibrary.Data.Models;
 
 namespace MovieLibrary.Web.Controllers
@@ -23,7 +24,7 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Movie movie)
+        public IActionResult Create(MovieViewModel movie)
         {
             _service.AddMovie(movie);
             return RedirectToAction("Index");
@@ -31,13 +32,12 @@ namespace MovieLibrary.Web.Controllers
 
         public IActionResult Edit(int id)
         {
-            Movie movie = _service.GetMovie(id);
-
+            MovieViewModel movie = _service.GetMovie(id);
             return View(movie);
         }
 
         [HttpPost]
-        public IActionResult Edit(Movie movie)
+        public IActionResult Edit(MovieViewModel movie)
         {
             _service.UpdateMovie(movie);
             return RedirectToAction("Index");
@@ -45,13 +45,13 @@ namespace MovieLibrary.Web.Controllers
 
         public IActionResult Details(int id)
         {
-            Movie movie = _service.GetMovie(id);
+            MovieViewModel movie = _service.GetMovie(id);
             return View(movie);
         }
     
         public IActionResult Delete(int id)
         {
-            Movie movie = _service.GetMovie(id);
+            MovieViewModel movie = _service.GetMovie(id);
             return View(movie);
         }
 

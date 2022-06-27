@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.Business.ServiceInterface;
+using MovieLibrary.Business.ViewModel;
 using MovieLibrary.Data.Models;
 
 namespace MovieLibrary.Web.Controllers
@@ -20,13 +21,13 @@ namespace MovieLibrary.Web.Controllers
 
         public IActionResult Create()
         {
-            List<Occupation> occupations = _service.GetOccupations();
+            List<OccupationViewModel> occupations = _service.GetOccupations();
             ViewBag.Occupations = occupations;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(User user)
+        public IActionResult Create(UserViewModel user)
         {
             _service.AddUser(user);
             return RedirectToAction("Index");
@@ -34,14 +35,14 @@ namespace MovieLibrary.Web.Controllers
 
         public IActionResult Edit(int id)
         {
-            User user = _service.GetUser(id);
-            List<Occupation> occupations = _service.GetOccupations();
+            UserViewModel user = _service.GetUser(id);
+            List<OccupationViewModel> occupations = _service.GetOccupations();
             ViewBag.Occupations = occupations;
             return View(user);
         }
 
         [HttpPost]
-        public IActionResult Edit(User user)
+        public IActionResult Edit(UserViewModel user)
         {
             _service.UpdateUser(user);
             return RedirectToAction("Index");
@@ -49,13 +50,13 @@ namespace MovieLibrary.Web.Controllers
 
         public IActionResult Details(int id) 
         {
-            User user = _service.GetUser(id);
+            UserViewModel user = _service.GetUser(id);
             return View(user);
         }
 
         public IActionResult Delete(int id)
         {
-            User user = _service.GetUser(id);
+            UserViewModel user = _service.GetUser(id);
             return View(user);
         }
 

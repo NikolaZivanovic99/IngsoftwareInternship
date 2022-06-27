@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MovieLibrary.Business.ServiceInterface;
+using MovieLibrary.Business.ViewModel;
 using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -10,12 +12,15 @@ namespace MovieLibrary.Business.Service
     public class UserService : IUserService
     {
         private readonly MoviesDataBaseContext _context;
-        public UserService(MoviesDataBaseContext context)
+        private readonly IMapper _mapper;
+        public UserService(MoviesDataBaseContext context,IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-        public void AddUser(User user)
+        public void AddUser(UserViewModel userModel)
         {
+            User user = _mapper.Map<User>(userModel);
             user.InsertDate = DateTime.Now;
             _context.Users.Add(user);
             _context.SaveChanges();
@@ -27,24 +32,25 @@ namespace MovieLibrary.Business.Service
             _context.SaveChanges();
         }
 
-        public List<Occupation> GetOccupations()
+        public List<OccupationViewModel> GetOccupations()
         {
-            List<Occupation> occupations = _context.Occupations.ToList(); 
+            List<OccupationViewModel> occupations = _mapper.Map<List<OccupationViewModel>>(_context.Occupations.ToList()); 
             return occupations;
         }
 
-        public User GetUser(int id)
+        public UserViewModel GetUser(int id)
         {
-            User user = _context.Users.Include(x => x.Occupation).Where(c => c.UserId == id && c.DeleteDate == null).FirstOrDefault();       
+            UserViewModel user =_mapper.Map<UserViewModel>( _context.Users.Include(x => x.Occupation).Where(c => c.UserId == id && c.DeleteDate == null).FirstOrDefault());       
             return user;    
         }
-        public List<User> GetUsers()
+        public List<UserViewModel> GetUsers()
         {
-            List<User> users = _context.Users.Include(c => c.Occupation).Where(x=> x.DeleteDate==null).ToList();
-            return users;
+            List<UserViewModel> userViewModels = _mapper.Map<List<UserViewModel>>(_context.Users.Include(c => c.Occupation).Where(x => x.DeleteDate == null).ToList());
+            return userViewModels;
         }
-        public void UpdateUser(User user)
+        public void UpdateUser(UserViewModel userModel)
         {
+            User user = _mapper.Map<User>(userModel);
             User userFromDataBase = _context.Users.Find(user.UserId);
             userFromDataBase.FirstName = user.FirstName;
             userFromDataBase.LastName = user.LastName;

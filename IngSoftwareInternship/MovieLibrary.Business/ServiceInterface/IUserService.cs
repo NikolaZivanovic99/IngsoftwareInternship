@@ -1,4 +1,5 @@
-﻿using MovieLibrary.Data.Models;
+﻿using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
 
@@ -6,11 +7,11 @@ namespace MovieLibrary.Business.ServiceInterface
 {
     public interface IUserService
     {
-        List<User> GetUsers();
-        void AddUser(User user);
-        User GetUser(int id);
-        void UpdateUser(User user);
+        List<UserViewModel> GetUsers();
+        void AddUser(UserViewModel user);
+        UserViewModel GetUser(int id);
+        void UpdateUser(UserViewModel user);
         void DeleteUser(int? id);
-        List<Occupation> GetOccupations();
+        List<OccupationViewModel> GetOccupations();
     }
 }
