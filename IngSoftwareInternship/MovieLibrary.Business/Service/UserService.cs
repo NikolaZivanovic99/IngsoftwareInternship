@@ -1,4 +1,5 @@
-﻿using MovieLibrary.Business.ServiceInterface;
+﻿using Microsoft.EntityFrameworkCore;
+using MovieLibrary.Business.ServiceInterface;
 using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -34,17 +35,12 @@ namespace MovieLibrary.Business.Service
 
         public User GetUser(int id)
         {
-            User user = _context.Users.Find(id);
-            user.Occupation = _context.Occupations.Find(user.OccupationId);         
+            User user = _context.Users.Include(x => x.Occupation).Where(c => c.UserId == id && c.DeleteDate == null).FirstOrDefault();       
             return user;    
         }
         public List<User> GetUsers()
         {
-            List<User> users = _context.Users.Where(x=> x.DeleteDate == null).ToList();
-            foreach (User user in users) 
-            {
-                user.Occupation = _context.Occupations.Find(user.OccupationId);                    
-            }
+            List<User> users = _context.Users.Include(c => c.Occupation).Where(x=> x.DeleteDate==null).ToList();
             return users;
         }
         public void UpdateUser(User user)
