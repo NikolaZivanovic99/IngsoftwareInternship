@@ -9,6 +9,16 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+@if (@TempData["AlertMessage"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function() {
+                alert("@TempData["AlertMessage"]");
+            }; 
+       </script>
+
+}
+
 <table class="table">
     <thead>
         <tr>

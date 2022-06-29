@@ -18,7 +18,12 @@ namespace MovieLibrary.Business.Service
         }
         public void AddMovie(MovieViewModel movieModel)
         {
-            Movie movie = _mapper.Map<Movie>(movieModel);
+            Movie movie = _context.Movies.Where(x => x.Caption == movieModel.Caption).FirstOrDefault();
+            if (movie != null) 
+            {
+                throw new ValidationException();
+            }   
+            movie= _mapper.Map<Movie>(movieModel);
             movie.InsertDate = DateTime.Now;
             _context.Movies.Add(movie);
             _context.SaveChanges();
@@ -26,6 +31,10 @@ namespace MovieLibrary.Business.Service
         public void DeleteMovie(int? id)
         {
             Movie movie = _context.Movies.Find(id);
+            if (movie == null) 
+            {
+                throw new ValidationException();
+            }
             movie.DeleteDate = DateTime.Now;
             _context.SaveChanges();
         }
@@ -34,7 +43,7 @@ namespace MovieLibrary.Business.Service
             Movie movie = _context.Movies.Find(id);
             if (movie == null || movie.DeleteDate !=null)
             {
-                return null;
+                throw new ValidationException();
             }
             return _mapper.Map<MovieViewModel>(movie);
         }
@@ -47,6 +56,18 @@ namespace MovieLibrary.Business.Service
         {
             Movie movie = _mapper.Map<Movie>(movieModel);
             Movie movieFromDataBase = _context.Movies.Find(movie.MovieId);
+            if (movieFromDataBase == null)
+            {
+                throw new ValidationException();
+            }
+            if (movieFromDataBase.Caption != movieModel.Caption) 
+            {
+                Movie movieProvera = _context.Movies.Where(x=> x.Caption == movieModel.Caption).FirstOrDefault();
+                if (movieProvera != null) 
+                {
+                    throw new ValidationException();               
+                }
+            }
             movieFromDataBase.Caption = movie.Caption;
             movieFromDataBase.ReleaseYear = movie.ReleaseYear;
             movieFromDataBase.SubmittedBy = movie.SubmittedBy;
