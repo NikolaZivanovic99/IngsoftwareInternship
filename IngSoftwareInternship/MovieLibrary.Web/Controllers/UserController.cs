@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MovieLibrary.Business;
 using MovieLibrary.Business.ServiceInterface;
 using MovieLibrary.Business.ViewModel;
 using MovieLibrary.Data.Models;
@@ -29,42 +30,108 @@ namespace MovieLibrary.Web.Controllers
         [HttpPost]
         public IActionResult Create(UserViewModel user)
         {
-            _service.AddUser(user);
-            return RedirectToAction("Index");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _service.AddUser(user);
+                    TempData["AlertMessage"] = "Added Successfully..";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.Occupations = _service.GetOccupations();
+                    return View(user);
+                }
+            }
+            catch (ValidationException ex) 
+            {
+                ViewBag.Message = string.Format(ex.Message);
+                ViewBag.Occupations = _service.GetOccupations();
+                return View(user);
+            }
         }
 
         public IActionResult Edit(int id)
         {
-            UserViewModel user = _service.GetUser(id);
-            List<OccupationViewModel> occupations = _service.GetOccupations();
-            ViewBag.Occupations = occupations;
-            return View(user);
+            try
+            {
+                UserViewModel user = _service.GetUser(id);
+                ViewBag.Occupations = _service.GetOccupations();
+                return View(user);
+            }
+            catch (ValidationException ex) 
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }    
         }
 
         [HttpPost]
         public IActionResult Edit(UserViewModel user)
         {
-            _service.UpdateUser(user);
-            return RedirectToAction("Index");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _service.UpdateUser(user);
+                    TempData["AlertMessage"] = "Updated successfully.";
+                    return RedirectToAction("Index");
+                }
+                else 
+                {
+                    ViewBag.Occupations = _service.GetOccupations();
+                    return View(user);
+                }
+            }
+            catch (ValidationException ex) 
+            {
+                ViewBag.Occupations = _service.GetOccupations();
+                ViewBag.Message = string.Format(ex.Message);
+                return View(user);
+            }
         }
 
         public IActionResult Details(int id) 
         {
-            UserViewModel user = _service.GetUser(id);
-            return View(user);
+            try
+            {
+                return View(_service.GetUser(id));
+            }
+            catch (ValidationException ex) 
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            } 
         }
 
         public IActionResult Delete(int id)
         {
-            UserViewModel user = _service.GetUser(id);
-            return View(user);
+            try
+            {
+                return View(_service.GetUser(id));
+            }
+            catch (ValidationException ex)
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
         public IActionResult Delete(int? id)
         {
-            _service.DeleteUser(id);
-            return RedirectToAction("Index");
+            try
+            {
+                _service.DeleteUser(id);
+                TempData["AlertMessage"] = "User Deleted Successfully..!";
+                return RedirectToAction("Index");
+            }
+            catch (ValidationException ex) 
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
     }
 }
