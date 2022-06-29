@@ -17,13 +17,8 @@ namespace MovieLibrary.Business.Service
             _mapper = mapper;  
         }
         public void AddMovie(MovieViewModel movieModel)
-        {
-            Movie movie = _context.Movies.Where(x => x.Caption == movieModel.Caption).FirstOrDefault();
-            if (movie != null) 
-            {
-                throw new ValidationException();
-            }   
-            movie= _mapper.Map<Movie>(movieModel);
+        {  
+            Movie movie= _mapper.Map<Movie>(movieModel);
             movie.InsertDate = DateTime.Now;
             _context.Movies.Add(movie);
             _context.SaveChanges();
@@ -33,7 +28,7 @@ namespace MovieLibrary.Business.Service
             Movie movie = _context.Movies.Find(id);
             if (movie == null) 
             {
-                throw new ValidationException();
+                throw new ValidationException("The movie with the given ID does not exist. Please try again!");
             }
             movie.DeleteDate = DateTime.Now;
             _context.SaveChanges();
@@ -43,7 +38,7 @@ namespace MovieLibrary.Business.Service
             Movie movie = _context.Movies.Find(id);
             if (movie == null || movie.DeleteDate !=null)
             {
-                throw new ValidationException();
+                throw new ValidationException("The movie with the given ID does not exist. Please try again!");
             }
             return _mapper.Map<MovieViewModel>(movie);
         }
@@ -58,14 +53,14 @@ namespace MovieLibrary.Business.Service
             Movie movieFromDataBase = _context.Movies.Find(movie.MovieId);
             if (movieFromDataBase == null)
             {
-                throw new ValidationException();
+                throw new ValidationException("The movie with the given ID does not exist. Please try again!");
             }
             if (movieFromDataBase.Caption != movieModel.Caption) 
             {
-                Movie movieProvera = _context.Movies.Where(x=> x.Caption == movieModel.Caption).FirstOrDefault();
-                if (movieProvera != null) 
+                Movie movieCheck = _context.Movies.Where(x=> x.Caption == movieModel.Caption).FirstOrDefault();
+                if (movieCheck != null) 
                 {
-                    throw new ValidationException();               
+                    throw new ValidationException("A movie with that caption already exists. Please try again");               
                 }
             }
             movieFromDataBase.Caption = movie.Caption;

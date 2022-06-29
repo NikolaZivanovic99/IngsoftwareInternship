@@ -23,7 +23,7 @@ namespace MovieLibrary.Business.Service
             User user = _context.Users.Where(x => x.IdNumber == userModel.IdNumber).FirstOrDefault();
             if (user != null) 
             {
-                throw new ValidationException();
+                throw new ValidationException("A user with the given identifier already exists. Please try again");
             }
             user = _mapper.Map<User>(userModel);
             user.InsertDate = DateTime.Now;
@@ -35,7 +35,7 @@ namespace MovieLibrary.Business.Service
             User user = _context.Users.Find(id);
             if (user == null) 
             {
-                throw new ValidationException();
+                throw new ValidationException("The user with the given identifier does not exist.Please try again");
             }
             user.DeleteDate = DateTime.Now;
             _context.SaveChanges();
@@ -51,7 +51,7 @@ namespace MovieLibrary.Business.Service
             UserViewModel user =_mapper.Map<UserViewModel>( _context.Users.Include(x => x.Occupation).Where(c => c.UserId == id && c.DeleteDate == null).FirstOrDefault());
             if (user == null) 
             {
-                throw new ValidationException();
+                throw new ValidationException("The user with the given identifier does not exist. Please try again");
             }
             return user;    
         }
@@ -65,14 +65,14 @@ namespace MovieLibrary.Business.Service
             User userFromDataBase = _context.Users.Find(user.UserId);
             if (userFromDataBase == null)
             {
-                throw new ValidationException();
+                throw new ValidationException("The user with the given identifier does not exist. Please try again");
             }
             if (userFromDataBase.IdNumber != userModel.IdNumber) 
             {
-                User userProvera = _context.Users.Where(x => x.IdNumber == userModel.IdNumber).FirstOrDefault();
-                if (userProvera != null) 
+                User userCheck = _context.Users.Where(x => x.IdNumber == userModel.IdNumber).FirstOrDefault();
+                if (userCheck != null) 
                 {
-                    throw new ValidationException();
+                    throw new ValidationException("A user with the given identifier already exists. Please try again");
                 }
             }
             userFromDataBase.FirstName = user.FirstName;

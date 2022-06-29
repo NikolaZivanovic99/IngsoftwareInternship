@@ -27,25 +27,16 @@ namespace MovieLibrary.Web.Controllers
         [HttpPost]
         public IActionResult Create(MovieViewModel movie)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    _service.AddMovie(movie);
-                    TempData["AlertMessage"] = "Added Successfully..";
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    return View(movie);
-                }
+                _service.AddMovie(movie);
+                TempData["AlertMessage"] = "Added Successfully..";
+                return RedirectToAction("Index");
             }
-            catch (ValidationException) 
+            else
             {
-                ViewBag.Message = string.Format("The movie with the entered data already exists. Please try again");
                 return View(movie);
             }
-            
         }
 
         public IActionResult Edit(int id)
@@ -55,12 +46,11 @@ namespace MovieLibrary.Web.Controllers
                 MovieViewModel movie = _service.GetMovie(id);
                 return View(movie);
             }
-            catch (ValidationException) 
+            catch (ValidationException ex) 
             {
-                TempData["AlertMessage"] = "A movie with this identifier does not exist. Please try again.";
+                TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");
-            }
-            
+            }           
         }
 
         [HttpPost]
@@ -77,15 +67,13 @@ namespace MovieLibrary.Web.Controllers
                 else 
                 {
                     return View(movie);
-                }
-                
+                }                
             }
-            catch (ValidationException) 
+            catch (ValidationException ex ) 
             {
-                ViewBag.Message = string.Format("There is no movie with the specified data. Please try again");
+                ViewBag.Message = string.Format(ex.Message);
                 return View(movie);
-            }
-            
+            }           
         }
 
         public IActionResult Details(int id)
@@ -94,9 +82,9 @@ namespace MovieLibrary.Web.Controllers
             {
                 return View(_service.GetMovie(id));
             }
-            catch (ValidationException) 
+            catch (ValidationException ex) 
             {
-                TempData["AlertMessage"] = "A movie with this identifier does not exist. Please try again.";
+                TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
         }
@@ -107,12 +95,11 @@ namespace MovieLibrary.Web.Controllers
             {
                 return View(_service.GetMovie(id));
             }
-            catch (ValidationException) 
+            catch (ValidationException ex) 
             {
-                TempData["AlertMessage"] = "A movie with this identifier does not exist. Please try again.";
+                TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");
-            }
-            
+            }            
         }
 
         [HttpPost]
@@ -124,13 +111,11 @@ namespace MovieLibrary.Web.Controllers
                 TempData["AlertMessage"] = "Movie Deleted Successfully..!";
                 return RedirectToAction("Index");
             }
-            catch (ValidationException) 
+            catch (ValidationException ex) 
             {
-                TempData["AlertMessage"] = "A movie with this identifier does not exist. Please try again.";
+                TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");
-            }
-            
-        }
-       
+            }           
+        }      
     }
 }

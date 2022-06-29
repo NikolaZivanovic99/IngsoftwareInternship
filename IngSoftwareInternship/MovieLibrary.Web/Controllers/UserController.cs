@@ -44,9 +44,9 @@ namespace MovieLibrary.Web.Controllers
                     return View(user);
                 }
             }
-            catch (ValidationException) 
+            catch (ValidationException ex) 
             {
-                ViewBag.Message = string.Format("The user with the entered data already exists. Please try again");
+                ViewBag.Message = string.Format(ex.Message);
                 ViewBag.Occupations = _service.GetOccupations();
                 return View(user);
             }
@@ -60,9 +60,9 @@ namespace MovieLibrary.Web.Controllers
                 ViewBag.Occupations = _service.GetOccupations();
                 return View(user);
             }
-            catch (ValidationException) 
+            catch (ValidationException ex) 
             {
-                TempData["AlertMessage"] = "A user with this identifier does not exist. Please try again.";
+                TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }    
         }
@@ -84,10 +84,10 @@ namespace MovieLibrary.Web.Controllers
                     return View(user);
                 }
             }
-            catch (ValidationException) 
+            catch (ValidationException ex) 
             {
                 ViewBag.Occupations = _service.GetOccupations();
-                ViewBag.Message = string.Format("There is no user with the specified data. Please try again");
+                ViewBag.Message = string.Format(ex.Message);
                 return View(user);
             }
         }
@@ -98,9 +98,9 @@ namespace MovieLibrary.Web.Controllers
             {
                 return View(_service.GetUser(id));
             }
-            catch (ValidationException) 
+            catch (ValidationException ex) 
             {
-                TempData["AlertMessage"] = "A user with this identifier does not exist. Please try again.";
+                TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");
             } 
         }
@@ -111,9 +111,9 @@ namespace MovieLibrary.Web.Controllers
             {
                 return View(_service.GetUser(id));
             }
-            catch (ValidationException)
+            catch (ValidationException ex)
             {
-                TempData["AlertMessage"] = "A user with this identifier does not exist. Please try again.";
+                TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
         }
@@ -127,9 +127,9 @@ namespace MovieLibrary.Web.Controllers
                 TempData["AlertMessage"] = "User Deleted Successfully..!";
                 return RedirectToAction("Index");
             }
-            catch (ValidationException) 
+            catch (ValidationException ex) 
             {
-                TempData["AlertMessage"] = "A user with this identifier does not exist. Please try again.";
+                TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
         }
