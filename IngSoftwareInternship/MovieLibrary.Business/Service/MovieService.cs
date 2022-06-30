@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MovieLibrary.Business.ServiceInterface;
 using MovieLibrary.Business.ViewModel;
 using MovieLibrary.Data.Models;
@@ -16,48 +17,49 @@ namespace MovieLibrary.Business.Service
            _context = context;
             _mapper = mapper;  
         }
-        public void AddMovie(MovieViewModel movieModel)
+        public async Task AddMovie(MovieViewModel movieModel)
         {  
             Movie movie= _mapper.Map<Movie>(movieModel);
             movie.InsertDate = DateTime.Now;
             _context.Movies.Add(movie);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public void DeleteMovie(int? id)
+        public async Task DeleteMovie(int? id)
         {
-            Movie movie = _context.Movies.Find(id);
+            Movie movie = await _context.Movies.FindAsync(id);
             if (movie == null) 
             {
                 throw new ValidationException("The movie with the given ID does not exist. Please try again!");
             }
             movie.DeleteDate = DateTime.Now;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public MovieViewModel GetMovie(int id)
+        public async Task<MovieViewModel> GetMovie(int id)
         {
-            Movie movie = _context.Movies.Find(id);
-            if (movie == null || movie.DeleteDate !=null)
+            Movie movie = await _context.Movies.FindAsync(id);
+            if (movie == null || movie.DeleteDate!=null) 
             {
                 throw new ValidationException("The movie with the given ID does not exist. Please try again!");
             }
             return _mapper.Map<MovieViewModel>(movie);
         }
 
-        public List<MovieViewModel> GetMovies() 
+        public async Task<List<MovieViewModel>> GetMovies() 
         {
-            return _mapper.Map<List<MovieViewModel>>(_context.Movies.Where(x=> x.DeleteDate ==null).ToList());
+            var movies = await _context.Movies.Where(x => x.DeleteDate == null).ToListAsync();
+            return _mapper.Map<List<MovieViewModel>>(movies);
         }
-        public void UpdateMovie(MovieViewModel movieModel)
+        public async Task UpdateMovie(MovieViewModel movieModel)
         {
             Movie movie = _mapper.Map<Movie>(movieModel);
-            Movie movieFromDataBase = _context.Movies.Find(movie.MovieId);
+            Movie movieFromDataBase = await _context.Movies.FindAsync(movie.MovieId);
             if (movieFromDataBase == null)
             {
                 throw new ValidationException("The movie with the given ID does not exist. Please try again!");
             }
             if (movieFromDataBase.Caption != movieModel.Caption) 
             {
-                Movie movieCheck = _context.Movies.Where(x=> x.Caption == movieModel.Caption).FirstOrDefault();
+                Movie movieCheck = await _context.Movies.Where(x=> x.Caption == movieModel.Caption).FirstOrDefaultAsync();
                 if (movieCheck != null) 
                 {
                     throw new ValidationException("A movie with that caption already exists. Please try again");               
@@ -68,7 +70,7 @@ namespace MovieLibrary.Business.Service
             movieFromDataBase.SubmittedBy = movie.SubmittedBy;
             movieFromDataBase.InsertDate = DateTime.Now;
 
-            _context.SaveChanges();
+           await _context.SaveChangesAsync();
         }
     }
 }

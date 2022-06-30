@@ -7,10 +7,10 @@ namespace MovieLibrary.Business.ServiceInterface
 {
     public interface IMovieService
     {
-        List<MovieViewModel> GetMovies();
-        void AddMovie(MovieViewModel movieModel);
-        void UpdateMovie(MovieViewModel movieModel);
-        MovieViewModel GetMovie(int id);
-        void DeleteMovie(int? id);
+        Task<List<MovieViewModel>> GetMovies();
+        Task AddMovie(MovieViewModel movieModel);
+        Task UpdateMovie(MovieViewModel movieModel);
+        Task<MovieViewModel> GetMovie(int id);
+        Task DeleteMovie(int? id);
     }
 }

@@ -7,11 +7,11 @@ namespace MovieLibrary.Business.ServiceInterface
 {
     public interface IUserService
     {
-        List<UserViewModel> GetUsers();
-        void AddUser(UserViewModel user);
-        UserViewModel GetUser(int id);
-        void UpdateUser(UserViewModel user);
-        void DeleteUser(int? id);
-        List<OccupationViewModel> GetOccupations();
+        Task<List<UserViewModel>> GetUsers();
+        Task AddUser(UserViewModel user);
+        Task<UserViewModel> GetUser(int id);
+        Task UpdateUser(UserViewModel user);
+        Task DeleteUser(int? id);
+        Task<List<OccupationViewModel>> GetOccupations();
     }
 }
