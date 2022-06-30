@@ -14,9 +14,9 @@ namespace MovieLibrary.Web.Controllers
         {
             _service = service;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(_service.GetMovies());
+            return View( await _service.GetMovies());
         }
 
         public IActionResult Create()
@@ -25,11 +25,11 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(MovieViewModel movie)
+        public async Task<IActionResult> Create(MovieViewModel movie)
         {
             if (ModelState.IsValid)
             {
-                _service.AddMovie(movie);
+                await _service.AddMovie(movie);
                 TempData["AlertMessage"] = "Added Successfully..";
                 return RedirectToAction("Index");
             }
@@ -39,11 +39,11 @@ namespace MovieLibrary.Web.Controllers
             }
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                MovieViewModel movie = _service.GetMovie(id);
+                MovieViewModel movie = await _service.GetMovie(id);
                 return View(movie);
             }
             catch (ValidationException ex) 
@@ -54,13 +54,13 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(MovieViewModel movie)
+        public async Task<IActionResult> Edit(MovieViewModel movie)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _service.UpdateMovie(movie);
+                    await _service.UpdateMovie(movie);
                     TempData["AlertMessage"] = "Updated successfully.";
                     return RedirectToAction("Index");
                 }
@@ -76,11 +76,11 @@ namespace MovieLibrary.Web.Controllers
             }           
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             try
             {
-                return View(_service.GetMovie(id));
+                return View(await _service.GetMovie(id));
             }
             catch (ValidationException ex) 
             {
@@ -89,11 +89,11 @@ namespace MovieLibrary.Web.Controllers
             }
         }
     
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                return View(_service.GetMovie(id));
+                return View( await _service.GetMovie(id));
             }
             catch (ValidationException ex) 
             {
@@ -103,11 +103,11 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int? id) 
+        public async Task<IActionResult> Delete(int? id) 
         {
             try
             {
-                _service.DeleteMovie(id);
+                await _service.DeleteMovie(id);
                 TempData["AlertMessage"] = "Movie Deleted Successfully..!";
                 return RedirectToAction("Index");
             }

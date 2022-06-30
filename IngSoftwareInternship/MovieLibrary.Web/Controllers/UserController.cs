@@ -15,49 +15,48 @@ namespace MovieLibrary.Web.Controllers
             _service = service;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(_service.GetUsers());
+            return View( await _service.GetUsers());
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            List<OccupationViewModel> occupations = _service.GetOccupations();
-            ViewBag.Occupations = occupations;
+            ViewBag.Occupations = await _service.GetOccupations();
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(UserViewModel user)
+        public async Task<IActionResult> Create(UserViewModel user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _service.AddUser(user);
+                    await _service.AddUser(user);
                     TempData["AlertMessage"] = "Added Successfully..";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    ViewBag.Occupations = _service.GetOccupations();
+                    ViewBag.Occupations = await _service.GetOccupations();
                     return View(user);
                 }
             }
             catch (ValidationException ex) 
             {
                 ViewBag.Message = string.Format(ex.Message);
-                ViewBag.Occupations = _service.GetOccupations();
+                ViewBag.Occupations = await _service.GetOccupations();
                 return View(user);
             }
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                UserViewModel user = _service.GetUser(id);
-                ViewBag.Occupations = _service.GetOccupations();
+                UserViewModel user = await _service.GetUser(id);
+                ViewBag.Occupations = await _service.GetOccupations();
                 return View(user);
             }
             catch (ValidationException ex) 
@@ -68,35 +67,35 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(UserViewModel user)
+        public async Task<IActionResult> Edit(UserViewModel user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _service.UpdateUser(user);
+                    await _service.UpdateUser(user);
                     TempData["AlertMessage"] = "Updated successfully.";
                     return RedirectToAction("Index");
                 }
                 else 
                 {
-                    ViewBag.Occupations = _service.GetOccupations();
+                    ViewBag.Occupations = await _service.GetOccupations();
                     return View(user);
                 }
             }
             catch (ValidationException ex) 
             {
-                ViewBag.Occupations = _service.GetOccupations();
+                ViewBag.Occupations = await _service.GetOccupations();
                 ViewBag.Message = string.Format(ex.Message);
                 return View(user);
             }
         }
 
-        public IActionResult Details(int id) 
+        public async  Task<IActionResult> Details(int id) 
         {
             try
             {
-                return View(_service.GetUser(id));
+                return View( await _service.GetUser(id));
             }
             catch (ValidationException ex) 
             {
@@ -105,11 +104,11 @@ namespace MovieLibrary.Web.Controllers
             } 
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                return View(_service.GetUser(id));
+                return View(await _service.GetUser(id));
             }
             catch (ValidationException ex)
             {
@@ -119,11 +118,11 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             try
             {
-                _service.DeleteUser(id);
+                await _service.DeleteUser(id);
                 TempData["AlertMessage"] = "User Deleted Successfully..!";
                 return RedirectToAction("Index");
             }
