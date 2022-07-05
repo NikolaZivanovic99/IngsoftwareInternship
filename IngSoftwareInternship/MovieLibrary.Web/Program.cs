@@ -12,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<IGenresService,GenreService>();
+builder.Services.AddScoped<IDirectorService, DirectorService>();
 
 
 builder.Services.AddDbContext<MoviesDataBaseContext>(options =>

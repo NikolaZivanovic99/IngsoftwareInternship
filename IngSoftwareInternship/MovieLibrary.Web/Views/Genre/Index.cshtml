@@ -1,0 +1,50 @@
+﻿@model IEnumerable<MovieLibrary.Business.ViewModel.GenreViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+@if (@TempData["AlertMessage"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function() {
+                alert("@TempData["AlertMessage"]");
+            }; 
+       </script>
+
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Caption)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Caption)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.GenreId }) |
+                @Html.ActionLink("Details", "Details", new { id=item.GenreId }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.GenreId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
