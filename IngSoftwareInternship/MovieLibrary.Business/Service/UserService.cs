@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieLibrary.Business.ServiceInterface;
 using MovieLibrary.Business.ViewModel;
 using MovieLibrary.Data.Models;
+using MovieLibrary.Data.Modelss;
 using System;
 using System.Collections.Generic;
 

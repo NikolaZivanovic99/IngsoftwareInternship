@@ -3,17 +3,20 @@ using System.Collections.Generic;
 
 namespace MovieLibrary.Data.Modelss
 {
-    public partial class User
+    public partial class Director
     {
-        public int UserId { get; set; }
+        public Director()
+        {
+            Movies = new HashSet<Movie>();
+        }
+
+        public int DirectorId { get; set; }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public string Address { get; set; } = null!;
-        public string IdNumber { get; set; } = null!;
-        public int OccupationId { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public DateTime InsertDate { get; set; }
         public DateTime? DeleteDate { get; set; }
 
-        public virtual Occupation Occupation { get; set; } = null!;
+        public virtual ICollection<Movie> Movies { get; set; }
     }
 }

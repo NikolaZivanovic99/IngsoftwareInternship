@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MovieLibrary.Data.Models
+namespace MovieLibrary.Data.Modelss
 {
     public partial class Occupation
     {

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MovieLibrary.Business.ViewModel;
 using MovieLibrary.Data.Models;
+using MovieLibrary.Data.Modelss;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace MovieLibrary.Business.Mapping
             CreateMap<User, UserViewModel>().ReverseMap();
             CreateMap<Occupation, OccupationViewModel>().ReverseMap();
             CreateMap<Movie, MovieViewModel>().ReverseMap();
+            CreateMap<Genre, GenreViewModel>().ReverseMap();
+            CreateMap<Director, DirectorViewModel>().ReverseMap();
         }
     }
 }
