@@ -10,12 +10,13 @@
 
 <h4>User</h4>
 <hr />
+
  @if (ViewBag.Message != null)
 {
        <script type="text/javascript">
             window.onload = function() {
                 alert("@ViewBag.Message");
-            }; 
+});
        </script> 
 
 }
@@ -54,6 +55,7 @@
                 </select>
                 <span asp-validation-for="OccupationId" class="text-danger"></span>
             </div>
+           
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -64,5 +66,9 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+<script> 
+$(document).ready(function() {
+    $('.js-example-basic-single').select2();
+});
+</script>
 

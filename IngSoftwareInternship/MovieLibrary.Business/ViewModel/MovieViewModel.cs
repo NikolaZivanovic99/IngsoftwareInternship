@@ -9,6 +9,12 @@ namespace MovieLibrary.Business.ViewModel
 {
     public class MovieViewModel
     {
+
+        public MovieViewModel()
+        {
+            Directors = new HashSet<DirectorViewModel>();
+            Genres = new HashSet<GenreViewModel>();
+        }
         public int MovieId { get; set; }
         [Required(ErrorMessage = "Caption is required!")]
         [StringLength(50, MinimumLength = 4)]
@@ -21,5 +27,19 @@ namespace MovieLibrary.Business.ViewModel
         [Required(ErrorMessage = "Submitted By is required!")]
         [StringLength(100, MinimumLength = 4)]
         public string SubmittedBy { get; set; } = null!;
+        public virtual ICollection<DirectorViewModel> Directors { get; set; }
+        public virtual ICollection<GenreViewModel> Genres { get; set; }
+
+        public string DirectorCsv { get
+            {
+                return string.Join(",", Directors.Select(x=> string.Join(" ",x.FirstName,x.LastName)));
+            } }
+        public string GenresCsv
+        {
+            get
+            {
+                return string.Join(",", Genres.Select(x => string.Join(" ",x.Caption)));
+            }
+        }
     }
 }

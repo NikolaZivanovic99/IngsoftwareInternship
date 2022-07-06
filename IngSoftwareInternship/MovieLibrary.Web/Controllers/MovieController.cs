@@ -10,26 +10,32 @@ namespace MovieLibrary.Web.Controllers
     public class MovieController : Controller
     {
         private readonly IMovieService _service;
-        public MovieController(IMovieService service)
+        private readonly IDirectorService _serviceDirector;
+        private readonly IGenresService _genresService;
+        public MovieController(IMovieService service, IDirectorService serviceDirector,IGenresService genresService)
         {
             _service = service;
+            _serviceDirector = serviceDirector;
+            _genresService = genresService;
         }
         public async Task<IActionResult> Index()
         {
             return View( await _service.GetMovies());
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.Directors = await _serviceDirector.GetDirectors();
+            ViewBag.Genres = await _genresService.GetGenres();
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(MovieViewModel movie)
+        public async Task<IActionResult> Create(MovieViewModel movie, int[] directors, int[] genres)
         {
             if (ModelState.IsValid)
             {
-                await _service.AddMovie(movie);
+                await _service.AddMovie(movie,directors,genres);
                 TempData["AlertMessage"] = "Added Successfully..";
                 return RedirectToAction("Index");
             }
@@ -44,6 +50,8 @@ namespace MovieLibrary.Web.Controllers
             try
             {
                 MovieViewModel movie = await _service.GetMovie(id);
+                ViewBag.Directors = await _serviceDirector.GetDirectors();
+                ViewBag.Genres = await _genresService.GetGenres();  
                 return View(movie);
             }
             catch (ValidationException ex) 
@@ -54,13 +62,13 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(MovieViewModel movie)
+        public async Task<IActionResult> Edit(MovieViewModel movie, int[] directors, int[]genres)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _service.UpdateMovie(movie);
+                    await _service.UpdateMovie(movie,directors,genres);
                     TempData["AlertMessage"] = "Updated successfully.";
                     return RedirectToAction("Index");
                 }

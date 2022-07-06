@@ -1,4 +1,5 @@
-﻿@model MovieLibrary.Business.ViewModel.MovieViewModel
+﻿@using MovieLibrary.Business.ViewModel
+@model MovieLibrary.Business.ViewModel.MovieViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -36,6 +37,25 @@
                 <input asp-for="SubmittedBy" class="form-control" />
                 <span asp-validation-for="SubmittedBy" class="text-danger"></span>
             </div>
+             <div>
+                <label asp-for="Directors" class="control-label">Directors</label><br/>
+                <select id="Directors"class="js-example-basic-single"name="directors[]" multiple="multiple">
+                @foreach(DirectorViewModel item in ViewBag.Directors)
+                    {
+                        <option value=@item.DirectorId>@item.FirstName @item.LastName</option>
+                    }
+            </select>
+            </div>
+            <div>
+                <label asp-for="Genres" class="control-label">Genres</label><br/>
+                <select id="Genres"class="js-example-basic-single"name="genres[]" multiple="multiple">
+                @foreach(GenreViewModel item in ViewBag.Genres)
+                    {
+                        <option value=@item.GenreId>@item.Caption</option>
+                    }
+            </select>
+            </div>
+            <br/>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -46,4 +66,10 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script> 
+$(document).ready(function() {
+    $('.js-example-basic-single').select2();
+});
+</script>
 
