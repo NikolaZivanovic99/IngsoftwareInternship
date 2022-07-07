@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using MovieLibrary.Data.Modelss;
+using MovieLibrary.Data.Models;
 
 namespace MovieLibrary.Data.Models
 {

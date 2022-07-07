@@ -9,18 +9,24 @@ namespace MovieLibrary.Web.Controllers
 {
     public class MovieController : Controller
     {
-        private readonly IMovieService _service;
-        public MovieController(IMovieService service)
+        private readonly IMovieService _movieService;
+        private readonly IDirectorService _directorService;
+        private readonly IGenresService _genresService;
+        public MovieController(IMovieService movieService, IDirectorService directorService, IGenresService genresService)
         {
-            _service = service;
+            _movieService = movieService;
+            _directorService = directorService;
+            _genresService = genresService;
         }
         public async Task<IActionResult> Index()
         {
-            return View( await _service.GetMovies());
+            return View( await _movieService.GetMovies());
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.Directors = await _directorService.GetDirectors();
+            ViewBag.Genres = await _genresService.GetGenres();
             return View();
         }
 
@@ -29,12 +35,14 @@ namespace MovieLibrary.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _service.AddMovie(movie);
+                await _movieService.AddMovie(movie);
                 TempData["AlertMessage"] = "Added Successfully..";
                 return RedirectToAction("Index");
             }
             else
             {
+                ViewBag.Directors = await _directorService.GetDirectors();
+                ViewBag.Genres = await _genresService.GetGenres();
                 return View(movie);
             }
         }
@@ -43,7 +51,9 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                MovieViewModel movie = await _service.GetMovie(id);
+                MovieViewModel movie = await _movieService.GetMovie(id);
+                ViewBag.Directors = await _directorService.GetDirectors();
+                ViewBag.Genres = await _genresService.GetGenres();  
                 return View(movie);
             }
             catch (ValidationException ex) 
@@ -60,18 +70,22 @@ namespace MovieLibrary.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _service.UpdateMovie(movie);
+                    await _movieService.UpdateMovie(movie);
                     TempData["AlertMessage"] = "Updated successfully.";
                     return RedirectToAction("Index");
                 }
                 else 
                 {
+                    ViewBag.Directors = await _directorService.GetDirectors();
+                    ViewBag.Genres = await _genresService.GetGenres();
                     return View(movie);
                 }                
             }
             catch (ValidationException ex ) 
             {
                 ViewBag.Message = string.Format(ex.Message);
+                ViewBag.Directors = await _directorService.GetDirectors();
+                ViewBag.Genres = await _genresService.GetGenres();
                 return View(movie);
             }           
         }
@@ -80,7 +94,7 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                return View(await _service.GetMovie(id));
+                return View(await _movieService.GetMovie(id));
             }
             catch (ValidationException ex) 
             {
@@ -93,7 +107,7 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                return View( await _service.GetMovie(id));
+                return View( await _movieService.GetMovie(id));
             }
             catch (ValidationException ex) 
             {
@@ -107,7 +121,7 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                await _service.DeleteMovie(id);
+                await _movieService.DeleteMovie(id);
                 TempData["AlertMessage"] = "Movie Deleted Successfully..!";
                 return RedirectToAction("Index");
             }

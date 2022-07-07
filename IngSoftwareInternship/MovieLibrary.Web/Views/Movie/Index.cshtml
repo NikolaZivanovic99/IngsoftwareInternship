@@ -18,7 +18,6 @@
        </script>
 
 }
-
 <table class="table">
     <thead>
         <tr>
@@ -31,12 +30,18 @@
             <th>
                 @Html.DisplayNameFor(model => model.SubmittedBy)
             </th>
+             <th>
+                @Html.DisplayNameFor(model => model.Directors)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genres)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+            <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Caption)
             </td>
@@ -45,6 +50,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.SubmittedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorCsv)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GenresCsv)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id=item.MovieId }) |
