@@ -18,11 +18,25 @@ namespace MovieLibrary.Web.Controllers
             _directorService = directorService;
             _genresService = genresService;
         }
+        
         public async Task<IActionResult> Index()
         {
-            return View( await _movieService.GetMovies());
+            ViewBag.Genres = await _genresService.GetGenres();
+            return View(await _movieService.GetMovies());
         }
-
+        [HttpPost]
+        public async Task<IActionResult> SearchMovie(string movieSearch)
+        {
+            ViewBag.Genres = await _genresService.GetGenres();
+            List<MovieViewModel> movies = await _movieService.SearchMovie(movieSearch);
+            return View("Index",movies);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SearchGenres(int genresSearch)
+        {
+            ViewBag.Genres = await _genresService.GetGenres();
+            return View("Index",await _movieService.SearchGenres(genresSearch));
+        }
         public async Task<IActionResult> Create()
         {
             ViewBag.Directors = await _directorService.GetDirectors();

@@ -50,7 +50,7 @@ namespace MovieLibrary.Business.Service
         public async Task<List<MovieViewModel>> GetMovies() 
         {
             var movies = await _context.Movies.Include(c=> c.Directors).Include(d=> d.Genres).Where(x => x.DeleteDate == null).ToListAsync();                    
-            return _mapper.Map<List<MovieViewModel>>(movies); ;
+            return _mapper.Map<List<MovieViewModel>>(movies);
         }
         public async Task UpdateMovie(MovieViewModel movieModel)
         {
@@ -79,7 +79,17 @@ namespace MovieLibrary.Business.Service
             movieFromDataBase.Genres = AddMovieGenre(movieFromDataBase.Genres, movieGenres);
            await _context.SaveChangesAsync();
         }
-
+        public async Task<List<MovieViewModel>> SearchMovie(string movieSearch)
+        {
+            List<Movie> movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Where(x => x.Caption.Contains(movieSearch) && x.DeleteDate==null).ToListAsync();
+            return _mapper.Map<List<MovieViewModel>>(movies);
+        }
+        public async Task<List<MovieViewModel>> SearchGenres(int genres)
+        {
+            Genre genress = await _context.Genres.Where(x => x.GenreId == genres).FirstOrDefaultAsync();
+            List<Movie> movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Where(x => x.Genres.Contains(genress) && x.DeleteDate==null).ToListAsync();
+            return _mapper.Map<List<MovieViewModel>>(movies);
+        }
         private ICollection<Director> DeleteMovieDirector(ICollection<Director> movieDirectors, ICollection<Director> selectedDirectors) 
         {
             foreach (var director in movieDirectors)
@@ -127,5 +137,7 @@ namespace MovieLibrary.Business.Service
             movieGenres = DeleteMovieGenre(movieGenres, selectedGenres);
             return movieGenres;
         }
+
+        
     }
 }
