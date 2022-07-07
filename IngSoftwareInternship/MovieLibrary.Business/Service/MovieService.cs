@@ -18,11 +18,11 @@ namespace MovieLibrary.Business.Service
            _context = context;
             _mapper = mapper;  
         }
-        public async Task AddMovie(MovieViewModel movieModel, int[] directors, int[]genres)
+        public async Task AddMovie(MovieViewModel movieModel)
         {
             Movie movie= _mapper.Map<Movie>(movieModel);
-            movie.Directors = await _context.Directors.Where(r => directors.Contains(r.DirectorId)).ToListAsync();
-            movie.Genres = await _context.Genres.Where(x => genres.Contains(x.GenreId)).ToListAsync(); 
+            movie.Directors = await _context.Directors.Where(r => movieModel.SelectedDirectors.Contains(r.DirectorId)).ToListAsync();
+            movie.Genres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync(); 
             movie.InsertDate = DateTime.Now;
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
@@ -52,7 +52,7 @@ namespace MovieLibrary.Business.Service
             var movies = await _context.Movies.Include(c=> c.Directors).Include(d=> d.Genres).Where(x => x.DeleteDate == null).ToListAsync();                    
             return _mapper.Map<List<MovieViewModel>>(movies); ;
         }
-        public async Task UpdateMovie(MovieViewModel movieModel, int[] directors, int[] genres)
+        public async Task UpdateMovie(MovieViewModel movieModel)
         {
             Movie movie = _mapper.Map<Movie>(movieModel);
             Movie movieFromDataBase = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).FirstOrDefaultAsync(x => x.MovieId == movie.MovieId && x.DeleteDate == null);
@@ -68,64 +68,64 @@ namespace MovieLibrary.Business.Service
                     throw new ValidationException("A movie with that caption already exists. Please try again");
                 }
             }
-            ICollection<Director> movieDirectors = await _context.Directors.Where(r => directors.Contains(r.DirectorId)).ToListAsync();
-            ICollection<Genre> movieGenres = await _context.Genres.Where(x => genres.Contains(x.GenreId)).ToListAsync();
+            ICollection<Director> movieDirectors = await _context.Directors.Where(r => movieModel.SelectedDirectors.Contains(r.DirectorId)).ToListAsync();
+            ICollection<Genre> movieGenres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync();
 
             movieFromDataBase.Caption = movie.Caption;
             movieFromDataBase.ReleaseYear = movie.ReleaseYear;
             movieFromDataBase.SubmittedBy = movie.SubmittedBy;
             movieFromDataBase.InsertDate = DateTime.Now;
-            movieFromDataBase.Directors = AddEntityDirector(movieFromDataBase.Directors,movieDirectors);
-            movieFromDataBase.Genres = AddEntityGenre(movieFromDataBase.Genres, movieGenres);
+            movieFromDataBase.Directors = AddMovieDirector(movieFromDataBase.Directors,movieDirectors);
+            movieFromDataBase.Genres = AddMovieGenre(movieFromDataBase.Genres, movieGenres);
            await _context.SaveChangesAsync();
         }
 
-        private ICollection<Director> DeleteEntityDirector(ICollection<Director> movieFromDataBase, ICollection<Director> selectedDirectors) 
+        private ICollection<Director> DeleteMovieDirector(ICollection<Director> movieDirectors, ICollection<Director> selectedDirectors) 
         {
-            foreach (var item2 in movieFromDataBase)
+            foreach (var director in movieDirectors)
             {
-                if (!selectedDirectors.Contains(item2))
+                if (!selectedDirectors.Contains(director))
                 {
-                    movieFromDataBase.Remove(item2);
+                    movieDirectors.Remove(director);
                 }
             }
-            return movieFromDataBase;
+            return movieDirectors;
         }
-        private ICollection<Director> AddEntityDirector(ICollection<Director> movieFromDataBase, ICollection<Director> selectedDirectors)
+        private ICollection<Director> AddMovieDirector(ICollection<Director> movieDirectors, ICollection<Director> selectedDirectors)
         {
-            foreach (var item2 in selectedDirectors)
+            foreach (var director in selectedDirectors)
             {
-                if (!movieFromDataBase.Contains(item2))
+                if (!movieDirectors.Contains(director))
                 {
-                    movieFromDataBase.Add(item2);
+                    movieDirectors.Add(director);
                 }
             }
-            movieFromDataBase = DeleteEntityDirector(movieFromDataBase, selectedDirectors);
-            return movieFromDataBase;
+            movieDirectors = DeleteMovieDirector(movieDirectors, selectedDirectors);
+            return movieDirectors;
         }
 
-        private ICollection<Genre> DeleteEntityGenre(ICollection<Genre> movieFromDataBase, ICollection<Genre> selectedGenres)
+        private ICollection<Genre> DeleteMovieGenre(ICollection<Genre> movieGenres, ICollection<Genre> selectedGenres)
         {
-            foreach (var item2 in movieFromDataBase)
+            foreach (var genre in movieGenres)
             {
-                if (!selectedGenres.Contains(item2))
+                if (!selectedGenres.Contains(genre))
                 {
-                    movieFromDataBase.Remove(item2);
+                    movieGenres.Remove(genre);
                 }
             }
-            return movieFromDataBase;
+            return movieGenres;
         }
-        private ICollection<Genre> AddEntityGenre(ICollection<Genre> movieFromDataBase, ICollection<Genre> selectedGenres)
+        private ICollection<Genre> AddMovieGenre(ICollection<Genre> movieGenres, ICollection<Genre> selectedGenres)
         {
-            foreach (var item2 in selectedGenres)
+            foreach (var genre in selectedGenres)
             {
-                if (!movieFromDataBase.Contains(item2))
+                if (!movieGenres.Contains(genre))
                 {
-                    movieFromDataBase.Add(item2);
+                    movieGenres.Add(genre);
                 }
             }
-            movieFromDataBase = DeleteEntityGenre(movieFromDataBase, selectedGenres);
-            return movieFromDataBase;
+            movieGenres = DeleteMovieGenre(movieGenres, selectedGenres);
+            return movieGenres;
         }
     }
 }

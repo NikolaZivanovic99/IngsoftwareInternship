@@ -43,8 +43,8 @@
                 <span asp-validation-for="SubmittedBy" class="text-danger"></span>
             </div>
              <div>
-                <label asp-for="Directors" class="control-label">Directors</label><br/>
-                <select id="Directors"class="js-example-basic-single"name="directors[]" multiple="multiple">
+                <label asp-for="SelectedDirectors" class="control-label">Directors</label><br/>
+                <select id="SelectedDirectors"class="multiple-genre-director"name="SelectedDirectors[]" multiple="multiple">
                 @foreach(DirectorViewModel item in ViewBag.Directors)
                     {
                         <option value=@item.DirectorId>@item.FirstName @item.LastName</option>
@@ -52,8 +52,8 @@
             </select>
             </div>
             <div>
-                <label asp-for="Genres" class="control-label">Genres</label><br/>
-                <select id="Genres"class="js-example-basic-single"name="genres[]" multiple="multiple">
+                <label asp-for="SelectedGenres" class="control-label">Genres</label><br/>
+                <select id="SelectedGenres"class="multiple-genre-director"name="SelectedGenres[]" multiple="multiple">
                 @foreach(GenreViewModel item in ViewBag.Genres)
                     {
                         <option value=@item.GenreId>@item.Caption</option>
@@ -73,7 +73,7 @@
 </div>
 <script> 
 $(document).ready(function() {
-    $('.js-example-basic-single').select2();
+    $('.multiple-genre-director').select2();
 });
 </script>
 

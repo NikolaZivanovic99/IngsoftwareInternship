@@ -2,8 +2,6 @@
 
 @{
     ViewData["Title"] = "Index";
-    int countDirectors=0;
-    int countGenres = 0;
 }
 
 <h1>Index</h1>
@@ -43,8 +41,6 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-            countDirectors= @item.Directors.Count;
-            countGenres = @item.Genres.Count;
             <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Caption)

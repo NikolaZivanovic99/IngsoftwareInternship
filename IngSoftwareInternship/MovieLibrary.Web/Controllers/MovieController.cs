@@ -9,38 +9,40 @@ namespace MovieLibrary.Web.Controllers
 {
     public class MovieController : Controller
     {
-        private readonly IMovieService _service;
-        private readonly IDirectorService _serviceDirector;
+        private readonly IMovieService _movieService;
+        private readonly IDirectorService _directorService;
         private readonly IGenresService _genresService;
-        public MovieController(IMovieService service, IDirectorService serviceDirector,IGenresService genresService)
+        public MovieController(IMovieService movieService, IDirectorService directorService, IGenresService genresService)
         {
-            _service = service;
-            _serviceDirector = serviceDirector;
+            _movieService = movieService;
+            _directorService = directorService;
             _genresService = genresService;
         }
         public async Task<IActionResult> Index()
         {
-            return View( await _service.GetMovies());
+            return View( await _movieService.GetMovies());
         }
 
         public async Task<IActionResult> Create()
         {
-            ViewBag.Directors = await _serviceDirector.GetDirectors();
+            ViewBag.Directors = await _directorService.GetDirectors();
             ViewBag.Genres = await _genresService.GetGenres();
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(MovieViewModel movie, int[] directors, int[] genres)
+        public async Task<IActionResult> Create(MovieViewModel movie)
         {
             if (ModelState.IsValid)
             {
-                await _service.AddMovie(movie,directors,genres);
+                await _movieService.AddMovie(movie);
                 TempData["AlertMessage"] = "Added Successfully..";
                 return RedirectToAction("Index");
             }
             else
             {
+                ViewBag.Directors = await _directorService.GetDirectors();
+                ViewBag.Genres = await _genresService.GetGenres();
                 return View(movie);
             }
         }
@@ -49,8 +51,8 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                MovieViewModel movie = await _service.GetMovie(id);
-                ViewBag.Directors = await _serviceDirector.GetDirectors();
+                MovieViewModel movie = await _movieService.GetMovie(id);
+                ViewBag.Directors = await _directorService.GetDirectors();
                 ViewBag.Genres = await _genresService.GetGenres();  
                 return View(movie);
             }
@@ -62,24 +64,28 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(MovieViewModel movie, int[] directors, int[]genres)
+        public async Task<IActionResult> Edit(MovieViewModel movie)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _service.UpdateMovie(movie,directors,genres);
+                    await _movieService.UpdateMovie(movie);
                     TempData["AlertMessage"] = "Updated successfully.";
                     return RedirectToAction("Index");
                 }
                 else 
                 {
+                    ViewBag.Directors = await _directorService.GetDirectors();
+                    ViewBag.Genres = await _genresService.GetGenres();
                     return View(movie);
                 }                
             }
             catch (ValidationException ex ) 
             {
                 ViewBag.Message = string.Format(ex.Message);
+                ViewBag.Directors = await _directorService.GetDirectors();
+                ViewBag.Genres = await _genresService.GetGenres();
                 return View(movie);
             }           
         }
@@ -88,7 +94,7 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                return View(await _service.GetMovie(id));
+                return View(await _movieService.GetMovie(id));
             }
             catch (ValidationException ex) 
             {
@@ -101,7 +107,7 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                return View( await _service.GetMovie(id));
+                return View( await _movieService.GetMovie(id));
             }
             catch (ValidationException ex) 
             {
@@ -115,7 +121,7 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                await _service.DeleteMovie(id);
+                await _movieService.DeleteMovie(id);
                 TempData["AlertMessage"] = "Movie Deleted Successfully..!";
                 return RedirectToAction("Index");
             }
