@@ -84,10 +84,10 @@ namespace MovieLibrary.Business.Service
             List<Movie> movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Where(x => x.Caption.Contains(movieSearch) && x.DeleteDate==null).ToListAsync();
             return _mapper.Map<List<MovieViewModel>>(movies);
         }
-        public async Task<List<MovieViewModel>> SearchGenres(int genres)
+        public async Task<List<MovieViewModel>> SearchGenres(int genresId)
         {
-            Genre genress = await _context.Genres.Where(x => x.GenreId == genres).FirstOrDefaultAsync();
-            List<Movie> movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Where(x => x.Genres.Contains(genress) && x.DeleteDate==null).ToListAsync();
+            Genre genres = await _context.Genres.Where(x => x.GenreId == genresId).FirstOrDefaultAsync();
+            List<Movie> movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Where(x => x.Genres.Contains(genres) && x.DeleteDate==null).ToListAsync();
             return _mapper.Map<List<MovieViewModel>>(movies);
         }
         private ICollection<Director> DeleteMovieDirector(ICollection<Director> movieDirectors, ICollection<Director> selectedDirectors) 
