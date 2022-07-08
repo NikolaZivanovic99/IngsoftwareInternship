@@ -110,6 +110,10 @@ namespace MovieLibrary.Business.Service
             }
             if (genre != null)
             {
+                if (movieHelps.Count == 0) 
+                {
+                    movieHelps = movies;
+                }
                 movieHelps = SearchGenres(genre,movieHelps);
             }
             return _mapper.Map<List<MovieViewModel>>(movieHelps);

@@ -27,6 +27,10 @@ namespace MovieLibrary.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchMovie(string movieSearch,int genresSearch)
         {
+            if (movieSearch == null) 
+            {
+                movieSearch = "Dont have a value!";
+            }
             ViewBag.Genres = await _genresService.GetGenres();
             List<MovieViewModel> movies = await _movieService.SearchMovie(movieSearch,genresSearch);
             return View("Index",movies);
