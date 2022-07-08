@@ -47,7 +47,7 @@
             <div class="form-group">
                 <label asp-for="OccupationId" class="control-label"></label>
                 <select name="OccupationId" id="OccupationId" class="form-control">
-                    @foreach( OccupationViewModel item in ViewBag.Occupations)
+                    @foreach( OccupationViewModel item in Model.Occuppations)
                     {
                         <option value=@item.OccupationId>@item.Caption</option>
                     }

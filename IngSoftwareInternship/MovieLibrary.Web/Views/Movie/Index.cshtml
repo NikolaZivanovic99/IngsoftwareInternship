@@ -22,22 +22,15 @@
 }
 <div class="col-4 p-0 justify-content-end">
        <form asp-action="SearchMovie">
-        <span class="btn-group">
-            <input class="form-control" type="text" name="movieSearch" placeholder="Search Movie.." />
-            <input class="p-1 btn btn-sm btn-info" type="submit" value="Search"/>
-        </span>
-    </form>
-
-    <form asp-action="SearchGenres">
-        <span class="btn-group">
+            <input class="form-control" type="text" name="movieSearch" placeholder="Search Movie.."/>
             <select name="genresSearch" >
+                <option>Select genre...</option>
                 @foreach(GenreViewModel item in ViewBag.Genres)
                     {
                         <option value=@item.GenreId>@item.Caption</option>
                     }
             </select>
             <input class="p-1 btn btn-sm btn-info" type="submit" value="Search"/>
-        </span>
     </form>
 </div>
 <table class="table">

@@ -34,6 +34,8 @@ namespace MovieLibrary.Business.ViewModel
 
         [Display(Name ="Occupation")]
         public int OccupationId { get; set; }
+
+        public List<OccupationViewModel>? Occuppations { get; set; } = null!;
      
         public virtual OccupationViewModel? Occupation { get; set; } = null!;
     }

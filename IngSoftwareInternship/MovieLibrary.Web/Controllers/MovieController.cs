@@ -21,27 +21,22 @@ namespace MovieLibrary.Web.Controllers
         
         public async Task<IActionResult> Index()
         {
-            ViewBag.Genres = await _genresService.GetGenres();
+            ViewBag.Genres= await _genresService.GetGenres();
             return View(await _movieService.GetMovies());
         }
         [HttpPost]
-        public async Task<IActionResult> SearchMovie(string movieSearch)
+        public async Task<IActionResult> SearchMovie(string movieSearch,int genresSearch)
         {
             ViewBag.Genres = await _genresService.GetGenres();
-            List<MovieViewModel> movies = await _movieService.SearchMovie(movieSearch);
+            List<MovieViewModel> movies = await _movieService.SearchMovie(movieSearch,genresSearch);
             return View("Index",movies);
-        }
-        [HttpPost]
-        public async Task<IActionResult> SearchGenres(int genresSearch)
-        {
-            ViewBag.Genres = await _genresService.GetGenres();
-            return View("Index",await _movieService.SearchGenres(genresSearch));
         }
         public async Task<IActionResult> Create()
         {
-            ViewBag.Directors = await _directorService.GetDirectors();
-            ViewBag.Genres = await _genresService.GetGenres();
-            return View();
+            MovieViewModel movie = new MovieViewModel();
+            movie.DirectorViewModels = await _directorService.GetDirectors();
+            movie.GenreViewModels= await _genresService.GetGenres();
+            return View(movie);
         }
 
         [HttpPost]
@@ -55,8 +50,8 @@ namespace MovieLibrary.Web.Controllers
             }
             else
             {
-                ViewBag.Directors = await _directorService.GetDirectors();
-                ViewBag.Genres = await _genresService.GetGenres();
+                movie.DirectorViewModels = await _directorService.GetDirectors();
+                movie.GenreViewModels = await _genresService.GetGenres();
                 return View(movie);
             }
         }
@@ -66,8 +61,8 @@ namespace MovieLibrary.Web.Controllers
             try
             {
                 MovieViewModel movie = await _movieService.GetMovie(id);
-                ViewBag.Directors = await _directorService.GetDirectors();
-                ViewBag.Genres = await _genresService.GetGenres();  
+                movie.DirectorViewModels = await _directorService.GetDirectors();
+                movie.GenreViewModels = await _genresService.GetGenres();  
                 return View(movie);
             }
             catch (ValidationException ex) 
@@ -90,16 +85,16 @@ namespace MovieLibrary.Web.Controllers
                 }
                 else 
                 {
-                    ViewBag.Directors = await _directorService.GetDirectors();
-                    ViewBag.Genres = await _genresService.GetGenres();
+                    movie.DirectorViewModels = await _directorService.GetDirectors();
+                    movie.GenreViewModels= await _genresService.GetGenres();
                     return View(movie);
                 }                
             }
             catch (ValidationException ex ) 
             {
                 ViewBag.Message = string.Format(ex.Message);
-                ViewBag.Directors = await _directorService.GetDirectors();
-                ViewBag.Genres = await _genresService.GetGenres();
+                movie.DirectorViewModels = await _directorService.GetDirectors();
+                movie.GenreViewModels = await _genresService.GetGenres();
                 return View(movie);
             }           
         }

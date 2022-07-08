@@ -45,7 +45,7 @@
              <div>
                 <label asp-for="SelectedDirectors" class="control-label">Directors</label><br/>
                 <select id="SelectedDirectors"class="multiple-genre-director"name="SelectedDirectors[]" multiple="multiple">
-                @foreach(DirectorViewModel item in ViewBag.Directors)
+                @foreach(DirectorViewModel item in Model.DirectorViewModels)
                     {
                         <option value=@item.DirectorId>@item.FirstName @item.LastName</option>
                     }
@@ -54,7 +54,7 @@
             <div>
                 <label asp-for="SelectedGenres" class="control-label">Genres</label><br/>
                 <select id="SelectedGenres"class="multiple-genre-director"name="SelectedGenres[]" multiple="multiple">
-                @foreach(GenreViewModel item in ViewBag.Genres)
+                @foreach(GenreViewModel item in Model.GenreViewModels)
                     {
                         <option value=@item.GenreId>@item.Caption</option>
                     }

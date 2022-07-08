@@ -22,8 +22,9 @@ namespace MovieLibrary.Web.Controllers
 
         public async Task<IActionResult> Create()
         {
-            ViewBag.Occupations = await _service.GetOccupations();
-            return View();
+            UserViewModel user =new UserViewModel();
+            user.Occuppations= await _service.GetOccupations();
+            return View(user);
         }
 
         [HttpPost]
@@ -39,14 +40,14 @@ namespace MovieLibrary.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.Occupations = await _service.GetOccupations();
+                    user.Occuppations= await _service.GetOccupations();
                     return View(user);
                 }
             }
             catch (ValidationException ex) 
             {
                 ViewBag.Message = string.Format(ex.Message);
-                ViewBag.Occupations = await _service.GetOccupations();
+                user.Occuppations = await _service.GetOccupations();
                 return View(user);
             }
         }
@@ -56,7 +57,7 @@ namespace MovieLibrary.Web.Controllers
             try
             {
                 UserViewModel user = await _service.GetUser(id);
-                ViewBag.Occupations = await _service.GetOccupations();
+                user.Occuppations= await _service.GetOccupations();
                 return View(user);
             }
             catch (ValidationException ex) 
@@ -79,13 +80,13 @@ namespace MovieLibrary.Web.Controllers
                 }
                 else 
                 {
-                    ViewBag.Occupations = await _service.GetOccupations();
+                    user.Occuppations= await _service.GetOccupations();
                     return View(user);
                 }
             }
             catch (ValidationException ex) 
             {
-                ViewBag.Occupations = await _service.GetOccupations();
+               user.Occuppations = await _service.GetOccupations();
                 ViewBag.Message = string.Format(ex.Message);
                 return View(user);
             }
