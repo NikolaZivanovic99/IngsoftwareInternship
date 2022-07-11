@@ -80,15 +80,19 @@ namespace MovieLibrary.Business.Service
             }
             ICollection<Director> movieDirectors = await _context.Directors.Where(r => movieModel.SelectedDirectors.Contains(r.DirectorId)).ToListAsync();
             ICollection<Genre> movieGenres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync();
-            string fileName = Path.GetFileNameWithoutExtension(movieModel.Image.FileName);
-            string extension = Path.GetExtension(movieModel.Image.FileName);
-            movie.ImagePath = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-            string path = Path.Combine(wwwRootPath + "/Image", fileName);
-            using (var fileStream = new FileStream(path, FileMode.Create))
+            if (movieModel.Image != null) 
             {
-                movieModel.Image.CopyTo(fileStream);
+                string fileName = Path.GetFileNameWithoutExtension(movieModel.Image.FileName);
+                string extension = Path.GetExtension(movieModel.Image.FileName);
+                movie.ImagePath = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                string path = Path.Combine(wwwRootPath + "/Image", fileName);
+                using (var fileStream = new FileStream(path, FileMode.Create))
+                {
+                    movieModel.Image.CopyTo(fileStream);
+                }
+                movieFromDataBase.ImagePath = movie.ImagePath;
             }
-            movieFromDataBase.ImagePath = movie.ImagePath;
+            
             movieFromDataBase.Caption = movie.Caption;
             movieFromDataBase.ReleaseYear = movie.ReleaseYear;
             movieFromDataBase.SubmittedBy = movie.SubmittedBy;
