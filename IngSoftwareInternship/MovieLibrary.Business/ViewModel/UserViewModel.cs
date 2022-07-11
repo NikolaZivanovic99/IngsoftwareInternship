@@ -1,21 +1,22 @@
-﻿using System;
+﻿using MovieLibrary.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MovieLibrary.Business.ViewModel
 {
     public class UserViewModel
     {
-       
+
         public int UserId { get; set; }
 
         [Display(Name = "First Name")]
-        [Required(ErrorMessage ="First Name is required!")]
-        [StringLength(50, MinimumLength =4)]
+        [Required(ErrorMessage = "First Name is required!")]
+        [StringLength(50, MinimumLength = 4)]
         public string FirstName { get; set; } = null!;
 
         [Display(Name = "Last Name")]
@@ -32,9 +33,12 @@ namespace MovieLibrary.Business.ViewModel
         [StringLength(50, MinimumLength = 4)]
         public string IdNumber { get; set; } = null!;
 
-        [Display(Name ="Occupation")]
+        [Display(Name = "Occupation")]
         public int OccupationId { get; set; }
-     
+
+        public List<OccupationViewModel>? Occupations { get; set; } = null!;
+
         public virtual OccupationViewModel? Occupation { get; set; } = null!;
+        
     }
 }

@@ -21,8 +21,16 @@ namespace MovieLibrary.Business.Service
             _mapper = mapper;
         }
 
-        public async Task AddDirector(DirectorViewModel directorModel)
+        public async Task AddDirector(DirectorViewModel directorModel, string pathRoot)
         {
+            string fileName = Path.GetFileNameWithoutExtension(directorModel.Image.FileName);
+            string extension = Path.GetExtension(directorModel.Image.FileName);
+            directorModel.ImagePath = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+            string path = Path.Combine(pathRoot + "/Image", fileName);
+            using (var fileStream = new FileStream(path, FileMode.Create))
+            {
+                directorModel.Image.CopyTo(fileStream);
+            }
             Director director = _mapper.Map<Director>(directorModel);
             director.InsertDate = DateTime.Now;
             _context.Directors.Add(director);
@@ -56,7 +64,7 @@ namespace MovieLibrary.Business.Service
             return _mapper.Map<List<DirectorViewModel>>(directors);
         }
 
-        public async Task UpdateDirector(DirectorViewModel directorModel)
+        public async Task UpdateDirector(DirectorViewModel directorModel, string pathRoot)
         {
             Director director = _mapper.Map<Director>(directorModel);
             Director directorFromDataBase = await _context.Directors.FindAsync(director.DirectorId);
@@ -64,7 +72,18 @@ namespace MovieLibrary.Business.Service
             {
                 throw new ValidationException("The director with the given identifier does not exist. Please try again");
             }
-
+            if (directorModel.Image != null) 
+            {
+                string fileName = Path.GetFileNameWithoutExtension(directorModel.Image.FileName);
+                string extension = Path.GetExtension(directorModel.Image.FileName);
+                director.ImagePath = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                string path = Path.Combine(pathRoot + "/Image", fileName);
+                using (var fileStream = new FileStream(path, FileMode.Create))
+                {
+                    directorModel.Image.CopyTo(fileStream);
+                }
+                directorFromDataBase.ImagePath = director.ImagePath;
+            }
             directorFromDataBase.FirstName = director.FirstName;
             directorFromDataBase.LastName = director.LastName;
             directorFromDataBase.DateOfBirth = director.DateOfBirth;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using MovieLibrary.Data.Models;
 
 namespace MovieLibrary.Data.Models
 {
@@ -43,6 +42,10 @@ namespace MovieLibrary.Data.Models
 
                 entity.Property(e => e.FirstName).HasMaxLength(50);
 
+                entity.Property(e => e.ImagePath)
+                    .HasMaxLength(250)
+                    .HasDefaultValueSql("('')");
+
                 entity.Property(e => e.InsertDate).HasColumnType("date");
 
                 entity.Property(e => e.LastName).HasMaxLength(50);
@@ -66,6 +69,10 @@ namespace MovieLibrary.Data.Models
                 entity.Property(e => e.Caption).HasMaxLength(50);
 
                 entity.Property(e => e.DeleteDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ImagePath)
+                    .HasMaxLength(250)
+                    .HasDefaultValueSql("('')");
 
                 entity.Property(e => e.InsertDate).HasColumnType("datetime");
 

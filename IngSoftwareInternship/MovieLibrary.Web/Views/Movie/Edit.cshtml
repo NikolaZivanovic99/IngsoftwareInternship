@@ -20,7 +20,7 @@
 }
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
              <div class="form-group">
                 <label asp-for="MovieId" class="control-label" hidden></label>
@@ -45,7 +45,7 @@
              <div>
                 <label asp-for="SelectedDirectors" class="control-label">Directors</label><br/>
                 <select id="SelectedDirectors"class="multiple-genre-director"name="SelectedDirectors[]" multiple="multiple">
-                @foreach(DirectorViewModel item in ViewBag.Directors)
+                @foreach(DirectorViewModel item in Model.DirectorViewModels)
                     {
                         <option value=@item.DirectorId>@item.FirstName @item.LastName</option>
                     }
@@ -54,11 +54,18 @@
             <div>
                 <label asp-for="SelectedGenres" class="control-label">Genres</label><br/>
                 <select id="SelectedGenres"class="multiple-genre-director"name="SelectedGenres[]" multiple="multiple">
-                @foreach(GenreViewModel item in ViewBag.Genres)
+                @foreach(GenreViewModel item in Model.GenreViewModels)
                     {
                         <option value=@item.GenreId>@item.Caption</option>
                     }
             </select>
+            </div>
+            <div class=" form-group">
+                 <label asp-for="Image" class="control-label"></label>
+                 <br/>
+                 <img src="@("~/image/" + Model.ImagePath)" asp-append-version="true" height=200px width=200px/>             
+                <input asp-for="Image" type="file" name="Image" accept="image/*"/>
+                <span asp-validation-for="Image" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">

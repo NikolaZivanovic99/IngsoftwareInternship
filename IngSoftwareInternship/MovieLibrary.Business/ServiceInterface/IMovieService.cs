@@ -8,9 +8,10 @@ namespace MovieLibrary.Business.ServiceInterface
     public interface IMovieService
     {
         Task<List<MovieViewModel>> GetMovies();
-        Task AddMovie(MovieViewModel movieModel);
-        Task UpdateMovie(MovieViewModel movieModel);
+        Task AddMovie(MovieViewModel movieModel,string pathRoot);
+        Task UpdateMovie(MovieViewModel movieModel,string pathRoot);
         Task<MovieViewModel> GetMovie(int id);
         Task DeleteMovie(int? id);
+        Task<List<MovieViewModel>> SearchMovie(string movieSearch,int genresSearch);
     }
 }

@@ -14,6 +14,7 @@ builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGenresService,GenreService>();
 builder.Services.AddScoped<IDirectorService, DirectorService>();
+builder.Services.AddScoped<UserService, UserService>();
 
 
 builder.Services.AddDbContext<MoviesDataBaseContext>(options =>
@@ -26,6 +27,7 @@ var mapperConfig = new MapperConfiguration(mc =>
 
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+
 
 var app = builder.Build();
 

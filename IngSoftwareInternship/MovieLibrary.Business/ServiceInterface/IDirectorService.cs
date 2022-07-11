@@ -10,8 +10,8 @@ namespace MovieLibrary.Business.ServiceInterface
     public interface IDirectorService
     {
         Task<List<DirectorViewModel>> GetDirectors();
-        Task AddDirector(DirectorViewModel directorModel);
-        Task UpdateDirector(DirectorViewModel directorModel);
+        Task AddDirector(DirectorViewModel directorModel,string pathRoot);
+        Task UpdateDirector(DirectorViewModel directorModel,string pathRoot);
         Task<DirectorViewModel> GetDirector(int id);
         Task DeleteDirector(int? id);
     }
