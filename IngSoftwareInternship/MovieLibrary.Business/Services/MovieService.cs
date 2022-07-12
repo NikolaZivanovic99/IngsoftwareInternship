@@ -1,58 +1,66 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MovieLibrary.Business.ServiceInterface;
-using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Business.ViewModels;
 using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using MovieLibrary.Business.Helpers;
+using MovieLibrary.Business.Services.ServiceInterfaces;
 
-namespace MovieLibrary.Business.Service
+namespace MovieLibrary.Business.Services
 {
     public class MovieService : IMovieService
     {
         private readonly MoviesDataBaseContext _context;
         private readonly IMapper _mapper;
+        
         public MovieService(MoviesDataBaseContext context, IMapper mapper)
         {
-           _context = context;
-            _mapper = mapper;  
+            _context = context;
+            _mapper = mapper;
         }
-        public async Task AddMovie(MovieViewModel movieModel)
+        public async Task AddMovie(MovieViewModel movieModel,string wwwRootPath)
         {
-            Movie movie= _mapper.Map<Movie>(movieModel);
+            Movie movie = _mapper.Map<Movie>(movieModel);
             movie.Directors = await _context.Directors.Where(r => movieModel.SelectedDirectors.Contains(r.DirectorId)).ToListAsync();
-            movie.Genres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync(); 
+            movie.Genres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync();
             movie.InsertDate = DateTime.Now;
+            movie.ImagePath = ImageHelper.SaveImage(movieModel.Image, wwwRootPath);
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
         }
-        public async Task DeleteMovie(int? id)
+        public async Task DeleteMovie(int? id,string pathRoot)
         {
             Movie movie = await _context.Movies.FindAsync(id);
-            if (movie == null) 
+            if (movie == null)
             {
                 throw new ValidationException("The movie with the given ID does not exist. Please try again!");
+            }
+            if (movie.ImagePath != null) 
+            {
+                ImageHelper.DeleteImage(pathRoot, movie.ImagePath);
             }
             movie.DeleteDate = DateTime.Now;
             await _context.SaveChangesAsync();
         }
         public async Task<MovieViewModel> GetMovie(int id)
         {
-            Movie movie = await _context.Movies.Where(x=> x.MovieId==id && x.DeleteDate==null).Include(c => c.Directors).Include(d => d.Genres).FirstOrDefaultAsync();
-            if (movie == null || movie.DeleteDate!=null) 
+            Movie movie = await _context.Movies.Where(x => x.MovieId == id && x.DeleteDate == null).Include(c => c.Directors).Include(d => d.Genres).FirstOrDefaultAsync();
+            if (movie == null || movie.DeleteDate != null)
             {
                 throw new ValidationException("The movie with the given ID does not exist. Please try again!");
             }
             return _mapper.Map<MovieViewModel>(movie);
         }
 
-        public async Task<List<MovieViewModel>> GetMovies() 
+        public async Task<List<MovieViewModel>> GetMovies()
         {
-            var movies = await _context.Movies.Include(c=> c.Directors).Include(d=> d.Genres).Where(x => x.DeleteDate == null).ToListAsync();                    
-            return _mapper.Map<List<MovieViewModel>>(movies); ;
+            var movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Where(x => x.DeleteDate == null).ToListAsync();
+            return _mapper.Map<List<MovieViewModel>>(movies);
         }
-        public async Task UpdateMovie(MovieViewModel movieModel)
+        public async Task UpdateMovie(MovieViewModel movieModel,string wwwRootPath)
         {
             Movie movie = _mapper.Map<Movie>(movieModel);
             Movie movieFromDataBase = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).FirstOrDefaultAsync(x => x.MovieId == movie.MovieId && x.DeleteDate == null);
@@ -70,16 +78,48 @@ namespace MovieLibrary.Business.Service
             }
             ICollection<Director> movieDirectors = await _context.Directors.Where(r => movieModel.SelectedDirectors.Contains(r.DirectorId)).ToListAsync();
             ICollection<Genre> movieGenres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync();
-
+            if (movieModel.Image != null) 
+            {
+                movieFromDataBase.ImagePath = ImageHelper.SaveImage(movieModel.Image, wwwRootPath);
+            }
+            
             movieFromDataBase.Caption = movie.Caption;
             movieFromDataBase.ReleaseYear = movie.ReleaseYear;
             movieFromDataBase.SubmittedBy = movie.SubmittedBy;
             movieFromDataBase.InsertDate = DateTime.Now;
-            movieFromDataBase.Directors = AddMovieDirector(movieFromDataBase.Directors,movieDirectors);
+            movieFromDataBase.Directors = AddMovieDirector(movieFromDataBase.Directors, movieDirectors);
             movieFromDataBase.Genres = AddMovieGenre(movieFromDataBase.Genres, movieGenres);
-           await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
-
+        public async Task<List<MovieViewModel>> SearchMovie(string movieSearch, int genresSearch)
+        {
+            var filteredMovies = new List<Movie>();
+            if (string.IsNullOrEmpty(movieSearch) && genresSearch > 0)
+            {
+                Genre genre = _context.Genres.Where(x => x.GenreId == genresSearch).FirstOrDefault();
+                filteredMovies = _context.Movies.Include(movie=> movie.Directors).Include(movie => movie.Genres).Where(movie => movie.Genres.Contains(genre) && movie.DeleteDate == null).ToList();
+            }
+            else if (!string.IsNullOrEmpty(movieSearch) && genresSearch > 0)
+            {
+                filteredMovies = _context.Movies
+                    .Include(movie => movie.Directors)
+                    .Include(movie => movie.Genres)
+                    .Where(movie => movie.DeleteDate == null &&
+                    movie.Genres.Select(genre => genre.GenreId == genresSearch).FirstOrDefault() &&
+                    (movie.Caption.Contains(movieSearch) ||
+                    movie.Directors.Select(director =>(director.FirstName + " " + director.LastName).Contains(movieSearch)).FirstOrDefault())).ToList();
+            }
+            else 
+            {
+                filteredMovies = _context.Movies
+                    .Include(movie=> movie.Genres)
+                    .Include(movie => movie.Directors)
+                    .Where(movie => movie.DeleteDate == null &&
+                    (movie.Caption.Contains(movieSearch) ||
+                    movie.Directors.Select(director => (director.FirstName + " " + director.LastName).Contains(movieSearch)).FirstOrDefault())).ToList();
+            }
+            return _mapper.Map<List<MovieViewModel>>(filteredMovies);
+        }
         private ICollection<Director> DeleteMovieDirector(ICollection<Director> movieDirectors, ICollection<Director> selectedDirectors) 
         {
             foreach (var director in movieDirectors)
@@ -126,6 +166,6 @@ namespace MovieLibrary.Business.Service
             }
             movieGenres = DeleteMovieGenre(movieGenres, selectedGenres);
             return movieGenres;
-        }
+        } 
     }
 }

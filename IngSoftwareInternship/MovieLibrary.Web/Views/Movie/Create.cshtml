@@ -1,5 +1,5 @@
-﻿@using MovieLibrary.Business.ViewModel
-@model MovieLibrary.Business.ViewModel.MovieViewModel
+﻿@using MovieLibrary.Business.ViewModels
+@model MovieLibrary.Business.ViewModels.MovieViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -20,7 +20,7 @@
 }
 <div class="row">
     <div class="col-md-4">  
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Caption" class="control-label"></label>
@@ -40,7 +40,7 @@
              <div>
                 <label asp-for="SelectedDirectors" class="control-label">Directors</label><br/>
                 <select id="SelectedDirectors"class="multple-select-genres-directors"name="SelectedDirectors[]" multiple="multiple">
-                @foreach(DirectorViewModel item in ViewBag.Directors)
+                @foreach(DirectorViewModel item in Model.DirectorViewModels)
                     {
                         <option value=@item.DirectorId>@item.FirstName @item.LastName</option>
                     }
@@ -49,11 +49,16 @@
             <div>
                 <label asp-for="SelectedGenres" class="control-label">Genres</label><br/>
                 <select id="SelectedGenres"class="multple-select-genres-directors"name="SelectedGenres[]" multiple="multiple">
-                @foreach(GenreViewModel item in ViewBag.Genres)
+                @foreach(GenreViewModel item in Model.GenreViewModels)
                     {
                         <option value=@item.GenreId>@item.Caption</option>
                     }
             </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Image" class="control-label"></label>
+                <input asp-for="Image" type="file" name="Image" accept="image/*"/>
+                <span asp-validation-for="Image" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MovieLibrary.Business.ViewModel.DirectorViewModel>
+﻿@model IEnumerable<MovieLibrary.Business.ViewModels.DirectorViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -21,6 +21,10 @@
 <table class="table">
     <thead>
         <tr>
+             
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.FirstName)
             </th>
@@ -36,6 +40,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                <img src="@("~/image/" + item.ImagePath)" asp-append-version="true" height="150px" width="150px"> 
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FirstName)
             </td>
