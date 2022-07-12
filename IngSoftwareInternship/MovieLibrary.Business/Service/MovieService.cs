@@ -6,6 +6,7 @@ using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace MovieLibrary.Business.Service
 {
@@ -13,36 +14,35 @@ namespace MovieLibrary.Business.Service
     {
         private readonly MoviesDataBaseContext _context;
         private readonly IMapper _mapper;
+        private SaveImage _saveImage;
         
         public MovieService(MoviesDataBaseContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _saveImage = new SaveImage();
         }
         public async Task AddMovie(MovieViewModel movieModel,string wwwRootPath)
         {
-            
-            string fileName = Path.GetFileNameWithoutExtension(movieModel.Image.FileName);
-            string extension = Path.GetExtension(movieModel.Image.FileName);
-            movieModel.ImagePath = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-            string path = Path.Combine(wwwRootPath + "/Image", fileName);
-            using (var fileStream = new FileStream(path, FileMode.Create))
-            {
-                movieModel.Image.CopyTo(fileStream);
-            }
             Movie movie = _mapper.Map<Movie>(movieModel);
             movie.Directors = await _context.Directors.Where(r => movieModel.SelectedDirectors.Contains(r.DirectorId)).ToListAsync();
             movie.Genres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync();
             movie.InsertDate = DateTime.Now;
+            movie.ImagePath = _saveImage.SaveImages(movieModel.Image,wwwRootPath);
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
         }
-        public async Task DeleteMovie(int? id)
+        public async Task DeleteMovie(int? id,string pathRoot)
         {
             Movie movie = await _context.Movies.FindAsync(id);
             if (movie == null)
             {
                 throw new ValidationException("The movie with the given ID does not exist. Please try again!");
+            }
+            if (movie.ImagePath != null) 
+            {
+                string existingFile = Path.Combine(pathRoot + "/Image", movie.ImagePath);
+                System.IO.File.Delete(existingFile);
             }
             movie.DeleteDate = DateTime.Now;
             await _context.SaveChangesAsync();
@@ -82,15 +82,7 @@ namespace MovieLibrary.Business.Service
             ICollection<Genre> movieGenres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync();
             if (movieModel.Image != null) 
             {
-                string fileName = Path.GetFileNameWithoutExtension(movieModel.Image.FileName);
-                string extension = Path.GetExtension(movieModel.Image.FileName);
-                movie.ImagePath = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-                string path = Path.Combine(wwwRootPath + "/Image", fileName);
-                using (var fileStream = new FileStream(path, FileMode.Create))
-                {
-                    movieModel.Image.CopyTo(fileStream);
-                }
-                movieFromDataBase.ImagePath = movie.ImagePath;
+                movieFromDataBase.ImagePath = _saveImage.SaveImages(movieModel.Image,wwwRootPath);
             }
             
             movieFromDataBase.Caption = movie.Caption;
@@ -106,7 +98,8 @@ namespace MovieLibrary.Business.Service
             var filteredMovies = new List<Movie>();
             if (string.IsNullOrEmpty(movieSearch) && genresSearch > 0)
             {
-                filteredMovies = _context.Movies.Include(movie => movie.Genres).Where(movie => movie.Genres.Select(genre => genre.GenreId == genresSearch).FirstOrDefault() && movie.DeleteDate == null).ToList();
+                Genre genre = _context.Genres.Where(x => x.GenreId == genresSearch).FirstOrDefault();
+                filteredMovies = _context.Movies.Include(movie=> movie.Directors).Include(movie => movie.Genres).Where(movie => movie.Genres.Contains(genre) && movie.DeleteDate == null).ToList();
             }
             else if (!string.IsNullOrEmpty(movieSearch) && genresSearch > 0)
             {
@@ -116,15 +109,16 @@ namespace MovieLibrary.Business.Service
                     .Where(movie => movie.DeleteDate == null &&
                     movie.Genres.Select(genre => genre.GenreId == genresSearch).FirstOrDefault() &&
                     (movie.Caption.Contains(movieSearch) ||
-                    movie.Directors.Select(director => string.Join(" ", director.FirstName, director.LastName).Contains(movieSearch)).FirstOrDefault())).ToList();
+                    movie.Directors.Select(director =>(director.FirstName + " " + director.LastName).Contains(movieSearch)).FirstOrDefault())).ToList();
             }
             else 
             {
                 filteredMovies = _context.Movies
+                    .Include(movie=> movie.Genres)
                     .Include(movie => movie.Directors)
                     .Where(movie => movie.DeleteDate == null &&
                     (movie.Caption.Contains(movieSearch) ||
-                    movie.Directors.Select(director => string.Join(" ", director.FirstName, director.LastName).Contains(movieSearch)).Any())).ToList();
+                    movie.Directors.Select(director => (director.FirstName + " " + director.LastName).Contains(movieSearch)).FirstOrDefault())).ToList();
             }
             return _mapper.Map<List<MovieViewModel>>(filteredMovies);
         }

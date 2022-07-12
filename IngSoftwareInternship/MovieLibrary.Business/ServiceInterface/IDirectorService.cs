@@ -13,6 +13,6 @@ namespace MovieLibrary.Business.ServiceInterface
         Task AddDirector(DirectorViewModel directorModel,string pathRoot);
         Task UpdateDirector(DirectorViewModel directorModel,string pathRoot);
         Task<DirectorViewModel> GetDirector(int id);
-        Task DeleteDirector(int? id);
+        Task DeleteDirector(int? id,string pathRoot);
     }
 }

@@ -134,7 +134,8 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                await _movieService.DeleteMovie(id);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                await _movieService.DeleteMovie(id,wwwRootPath);
                 TempData["AlertMessage"] = "Movie Deleted Successfully..!";
                 return RedirectToAction("Index");
             }

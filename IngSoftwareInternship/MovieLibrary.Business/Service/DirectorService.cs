@@ -15,34 +15,34 @@ namespace MovieLibrary.Business.Service
     {
         private readonly MoviesDataBaseContext _context;
         private readonly IMapper _mapper;
+        private SaveImage _saveImage;
         public DirectorService(MoviesDataBaseContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _saveImage = new SaveImage();
         }
 
         public async Task AddDirector(DirectorViewModel directorModel, string pathRoot)
         {
-            string fileName = Path.GetFileNameWithoutExtension(directorModel.Image.FileName);
-            string extension = Path.GetExtension(directorModel.Image.FileName);
-            directorModel.ImagePath = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-            string path = Path.Combine(pathRoot + "/Image", fileName);
-            using (var fileStream = new FileStream(path, FileMode.Create))
-            {
-                directorModel.Image.CopyTo(fileStream);
-            }
             Director director = _mapper.Map<Director>(directorModel);
             director.InsertDate = DateTime.Now;
+            director.ImagePath = _saveImage.SaveImages(directorModel.Image, pathRoot);
             _context.Directors.Add(director);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteDirector(int? id)
+        public async Task DeleteDirector(int? id,string pathRoot)
         {
             Director director = await _context.Directors.FindAsync(id);
             if (director == null)
             {
                 throw new ValidationException("The Director with the given ID does not exist. Please try again!");
+            }
+            if (director.ImagePath != null)
+            {
+                string existingFile = Path.Combine(pathRoot + "/Image", director.ImagePath);
+                System.IO.File.Delete(existingFile);
             }
             director.DeleteDate = DateTime.Now;
             await _context.SaveChangesAsync();
@@ -74,15 +74,8 @@ namespace MovieLibrary.Business.Service
             }
             if (directorModel.Image != null) 
             {
-                string fileName = Path.GetFileNameWithoutExtension(directorModel.Image.FileName);
-                string extension = Path.GetExtension(directorModel.Image.FileName);
-                director.ImagePath = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-                string path = Path.Combine(pathRoot + "/Image", fileName);
-                using (var fileStream = new FileStream(path, FileMode.Create))
-                {
-                    directorModel.Image.CopyTo(fileStream);
-                }
-                directorFromDataBase.ImagePath = director.ImagePath;
+
+                directorFromDataBase.ImagePath = _saveImage.SaveImages(directorModel.Image, pathRoot);
             }
             directorFromDataBase.FirstName = director.FirstName;
             directorFromDataBase.LastName = director.LastName;

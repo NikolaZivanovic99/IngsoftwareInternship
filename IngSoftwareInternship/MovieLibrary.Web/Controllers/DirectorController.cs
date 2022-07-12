@@ -106,7 +106,8 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                await _service.DeleteDirector(id);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                await _service.DeleteDirector(id, wwwRootPath);
                 TempData["AlertMessage"] = "Director Deleted Successfully..!";
                 return RedirectToAction("Index");
             }
