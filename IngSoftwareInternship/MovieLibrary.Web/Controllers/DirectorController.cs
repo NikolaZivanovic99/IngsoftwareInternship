@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MovieLibrary.Business.ServiceInterface;
-using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Business.Services.ServiceInterfaces;
+using MovieLibrary.Business.ViewModels;
 using System.ComponentModel.DataAnnotations;
 
 namespace MovieLibrary.Web.Controllers

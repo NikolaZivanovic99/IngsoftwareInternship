@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MovieLibrary.Business.ServiceInterface;
-using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Business.Services.ServiceInterfaces;
+using MovieLibrary.Business.ViewModels;
 using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
 
 
-namespace MovieLibrary.Business.Service
+namespace MovieLibrary.Business.Services
 {
     public class UserService : IUserService
     {

@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MovieLibrary.Business.Mapping;
-using MovieLibrary.Business.Service;
-using MovieLibrary.Business.ServiceInterface;
+using MovieLibrary.Business.Services;
+using MovieLibrary.Business.Services.ServiceInterfaces;
 using MovieLibrary.Data.Models;
 
 

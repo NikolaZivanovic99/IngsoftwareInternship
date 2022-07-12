@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MovieLibrary.Business.ViewModel
+namespace MovieLibrary.Business.ViewModels
 {
     public class OccupationViewModel
     {

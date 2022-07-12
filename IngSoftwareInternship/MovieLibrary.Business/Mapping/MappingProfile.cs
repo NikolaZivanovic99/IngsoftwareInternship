@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Business.ViewModels;
 using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;

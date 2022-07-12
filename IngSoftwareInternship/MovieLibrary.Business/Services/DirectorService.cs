@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MovieLibrary.Business.ServiceInterface;
-using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Business.Helpers;
+using MovieLibrary.Business.Services.ServiceInterfaces;
+using MovieLibrary.Business.ViewModels;
 using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -9,25 +10,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MovieLibrary.Business.Service
+namespace MovieLibrary.Business.Services
 {
     public class DirectorService : IDirectorService
     {
         private readonly MoviesDataBaseContext _context;
         private readonly IMapper _mapper;
-        private SaveImage _saveImage;
         public DirectorService(MoviesDataBaseContext context, IMapper mapper)
         {
             _context = context;
-            _mapper = mapper;
-            _saveImage = new SaveImage();
+            _mapper = mapper;           
         }
 
         public async Task AddDirector(DirectorViewModel directorModel, string pathRoot)
         {
             Director director = _mapper.Map<Director>(directorModel);
             director.InsertDate = DateTime.Now;
-            director.ImagePath = _saveImage.SaveImages(directorModel.Image, pathRoot);
+            director.ImagePath = ImageHelper.SaveImage(directorModel.Image, pathRoot);
             _context.Directors.Add(director);
             await _context.SaveChangesAsync();
         }
@@ -41,8 +40,7 @@ namespace MovieLibrary.Business.Service
             }
             if (director.ImagePath != null)
             {
-                string existingFile = Path.Combine(pathRoot + "/Image", director.ImagePath);
-                System.IO.File.Delete(existingFile);
+                ImageHelper.DeleteImage(pathRoot, director.ImagePath);
             }
             director.DeleteDate = DateTime.Now;
             await _context.SaveChangesAsync();
@@ -75,7 +73,7 @@ namespace MovieLibrary.Business.Service
             if (directorModel.Image != null) 
             {
 
-                directorFromDataBase.ImagePath = _saveImage.SaveImages(directorModel.Image, pathRoot);
+                directorFromDataBase.ImagePath = ImageHelper.SaveImage(directorModel.Image, pathRoot);
             }
             directorFromDataBase.FirstName = director.FirstName;
             directorFromDataBase.LastName = director.LastName;

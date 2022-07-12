@@ -1,11 +1,11 @@
-﻿using MovieLibrary.Business.ViewModel;
+﻿using MovieLibrary.Business.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MovieLibrary.Business.ServiceInterface
+namespace MovieLibrary.Business.Services.ServiceInterfaces
 {
     public interface IDirectorService
     {

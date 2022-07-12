@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace MovieLibrary.Business.ViewModel
+namespace MovieLibrary.Business.ViewModels
 {
     public class UserViewModel
     {

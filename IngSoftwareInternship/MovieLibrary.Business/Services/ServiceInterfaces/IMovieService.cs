@@ -1,9 +1,9 @@
-﻿using MovieLibrary.Business.ViewModel;
+﻿using MovieLibrary.Business.ViewModels;
 using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
 
-namespace MovieLibrary.Business.ServiceInterface
+namespace MovieLibrary.Business.Services.ServiceInterfaces
 {
     public interface IMovieService
     {

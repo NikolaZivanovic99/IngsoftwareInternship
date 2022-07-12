@@ -1,26 +1,25 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using MovieLibrary.Business.ServiceInterface;
-using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Business.ViewModels;
 using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using MovieLibrary.Business.Helpers;
+using MovieLibrary.Business.Services.ServiceInterfaces;
 
-namespace MovieLibrary.Business.Service
+namespace MovieLibrary.Business.Services
 {
     public class MovieService : IMovieService
     {
         private readonly MoviesDataBaseContext _context;
         private readonly IMapper _mapper;
-        private SaveImage _saveImage;
         
         public MovieService(MoviesDataBaseContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _saveImage = new SaveImage();
         }
         public async Task AddMovie(MovieViewModel movieModel,string wwwRootPath)
         {
@@ -28,7 +27,7 @@ namespace MovieLibrary.Business.Service
             movie.Directors = await _context.Directors.Where(r => movieModel.SelectedDirectors.Contains(r.DirectorId)).ToListAsync();
             movie.Genres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync();
             movie.InsertDate = DateTime.Now;
-            movie.ImagePath = _saveImage.SaveImages(movieModel.Image,wwwRootPath);
+            movie.ImagePath = ImageHelper.SaveImage(movieModel.Image, wwwRootPath);
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
         }
@@ -41,8 +40,7 @@ namespace MovieLibrary.Business.Service
             }
             if (movie.ImagePath != null) 
             {
-                string existingFile = Path.Combine(pathRoot + "/Image", movie.ImagePath);
-                System.IO.File.Delete(existingFile);
+                ImageHelper.DeleteImage(pathRoot, movie.ImagePath);
             }
             movie.DeleteDate = DateTime.Now;
             await _context.SaveChangesAsync();
@@ -82,7 +80,7 @@ namespace MovieLibrary.Business.Service
             ICollection<Genre> movieGenres = await _context.Genres.Where(x => movieModel.SelectedGenres.Contains(x.GenreId)).ToListAsync();
             if (movieModel.Image != null) 
             {
-                movieFromDataBase.ImagePath = _saveImage.SaveImages(movieModel.Image,wwwRootPath);
+                movieFromDataBase.ImagePath = ImageHelper.SaveImage(movieModel.Image, wwwRootPath);
             }
             
             movieFromDataBase.Caption = movie.Caption;
