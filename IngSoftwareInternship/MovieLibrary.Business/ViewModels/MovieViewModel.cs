@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MovieLibrary.Business.ViewModel
+namespace MovieLibrary.Business.ViewModels
 {
     public class MovieViewModel
     {
@@ -33,7 +35,9 @@ namespace MovieLibrary.Business.ViewModel
         public List<DirectorViewModel>? DirectorViewModels { get; set; } = null!;
         public virtual ICollection<DirectorViewModel> Directors { get; set; }
         public virtual ICollection<GenreViewModel> Genres { get; set; }
-
+        public string? ImagePath { get; set; }= null!;
+        [NotMapped]
+        public IFormFile? Image { get; set; }
         public string DirectorCsv { get
             {
                 return string.Join(",", Directors.Select(x=> string.Join(" ",x.FirstName,x.LastName)));
@@ -45,5 +49,6 @@ namespace MovieLibrary.Business.ViewModel
                 return string.Join(",", Genres.Select(x => x.Caption));
             }
         }
+      
     }
 }

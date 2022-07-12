@@ -17,6 +17,7 @@ namespace MovieLibrary.Data.Models
         public string SubmittedBy { get; set; } = null!;
         public DateTime InsertDate { get; set; }
         public DateTime? DeleteDate { get; set; }
+        public string ImagePath { get; set; } = null!;
 
         public virtual ICollection<Director> Directors { get; set; }
         public virtual ICollection<Genre> Genres { get; set; }

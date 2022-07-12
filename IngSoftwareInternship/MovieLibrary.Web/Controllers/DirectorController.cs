@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MovieLibrary.Business.ServiceInterface;
-using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Business.Services.ServiceInterfaces;
+using MovieLibrary.Business.ViewModels;
 using System.ComponentModel.DataAnnotations;
 
 namespace MovieLibrary.Web.Controllers
@@ -8,9 +8,11 @@ namespace MovieLibrary.Web.Controllers
     public class DirectorController : Controller
     {
         private readonly IDirectorService _service;
-        public DirectorController(IDirectorService service)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public DirectorController(IDirectorService service, IWebHostEnvironment webHostEnvironment)
         {
             _service = service;
+            _webHostEnvironment = webHostEnvironment;
         }
         public async Task<IActionResult> Index()
         {
@@ -26,7 +28,8 @@ namespace MovieLibrary.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _service.AddDirector(director);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                await _service.AddDirector(director,wwwRootPath);
                 TempData["AlertMessage"] = "Added Successfully..";
                 return RedirectToAction("Index");
             }
@@ -56,7 +59,8 @@ namespace MovieLibrary.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _service.UpdateDirector(director);
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    await _service.UpdateDirector(director,wwwRootPath);
                     TempData["AlertMessage"] = "Updated successfully.";
                     return RedirectToAction("Index");
                 }
@@ -102,7 +106,8 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                await _service.DeleteDirector(id);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                await _service.DeleteDirector(id, wwwRootPath);
                 TempData["AlertMessage"] = "Director Deleted Successfully..!";
                 return RedirectToAction("Index");
             }

@@ -16,6 +16,7 @@ namespace MovieLibrary.Data.Models
         public DateTime DateOfBirth { get; set; }
         public DateTime InsertDate { get; set; }
         public DateTime? DeleteDate { get; set; }
+        public string ImagePath { get; set; } = null!;
 
         public virtual ICollection<Movie> Movies { get; set; }
     }

@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MovieLibrary.Business.ViewModel
+namespace MovieLibrary.Business.ViewModels
 {
     public class DirectorViewModel
     {
@@ -28,5 +30,8 @@ namespace MovieLibrary.Business.ViewModel
         
         public DateTime DateOfBirth { get; set; }
         public virtual ICollection<MovieViewModel> Movies { get; set; }
+        public string? ImagePath { get; set; } = null!;
+        [NotMapped]
+        public IFormFile? Image { get; set; }
     }
 }

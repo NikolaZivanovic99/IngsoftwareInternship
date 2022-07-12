@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.Business;
-using MovieLibrary.Business.Service;
-using MovieLibrary.Business.ServiceInterface;
-using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Business.Services;
+using MovieLibrary.Business.Services.ServiceInterfaces;
+using MovieLibrary.Business.ViewModels;
 using MovieLibrary.Data.Models;
 
 namespace MovieLibrary.Web.Controllers
@@ -12,11 +12,13 @@ namespace MovieLibrary.Web.Controllers
         private readonly IMovieService _movieService;
         private readonly IDirectorService _directorService;
         private readonly IGenresService _genresService;
-        public MovieController(IMovieService movieService, IDirectorService directorService, IGenresService genresService)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public MovieController(IMovieService movieService, IDirectorService directorService, IGenresService genresService,IWebHostEnvironment webHostEnvironment)
         {
             _movieService = movieService;
             _directorService = directorService;
             _genresService = genresService;
+            _webHostEnvironment = webHostEnvironment;
         }
         
         public async Task<IActionResult> Index()
@@ -27,10 +29,6 @@ namespace MovieLibrary.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchMovie(string movieSearch,int genresSearch)
         {
-            if (movieSearch == null) 
-            {
-                movieSearch = "Dont have a value!";
-            }
             ViewBag.Genres = await _genresService.GetGenres();
             List<MovieViewModel> movies = await _movieService.SearchMovie(movieSearch,genresSearch);
             return View("Index",movies);
@@ -48,7 +46,8 @@ namespace MovieLibrary.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _movieService.AddMovie(movie);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                await _movieService.AddMovie(movie, wwwRootPath);
                 TempData["AlertMessage"] = "Added Successfully..";
                 return RedirectToAction("Index");
             }
@@ -83,7 +82,8 @@ namespace MovieLibrary.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _movieService.UpdateMovie(movie);
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    await _movieService.UpdateMovie(movie,wwwRootPath);
                     TempData["AlertMessage"] = "Updated successfully.";
                     return RedirectToAction("Index");
                 }
@@ -134,7 +134,8 @@ namespace MovieLibrary.Web.Controllers
         {
             try
             {
-                await _movieService.DeleteMovie(id);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                await _movieService.DeleteMovie(id,wwwRootPath);
                 TempData["AlertMessage"] = "Movie Deleted Successfully..!";
                 return RedirectToAction("Index");
             }

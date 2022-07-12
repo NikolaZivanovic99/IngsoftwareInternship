@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.Business;
-using MovieLibrary.Business.ServiceInterface;
-using MovieLibrary.Business.ViewModel;
+using MovieLibrary.Business.Services.ServiceInterfaces;
+using MovieLibrary.Business.ViewModels;
 using MovieLibrary.Data.Models;
 
 namespace MovieLibrary.Web.Controllers
@@ -23,7 +23,7 @@ namespace MovieLibrary.Web.Controllers
         public async Task<IActionResult> Create()
         {
             UserViewModel user =new UserViewModel();
-            user.Occuppations= await _service.GetOccupations();
+            user.Occupations= await _service.GetOccupations();
             return View(user);
         }
 
@@ -40,14 +40,14 @@ namespace MovieLibrary.Web.Controllers
                 }
                 else
                 {
-                    user.Occuppations= await _service.GetOccupations();
+                    user.Occupations= await _service.GetOccupations();
                     return View(user);
                 }
             }
             catch (ValidationException ex) 
             {
                 ViewBag.Message = string.Format(ex.Message);
-                user.Occuppations = await _service.GetOccupations();
+                 user.Occupations = await _service.GetOccupations();
                 return View(user);
             }
         }
@@ -57,7 +57,7 @@ namespace MovieLibrary.Web.Controllers
             try
             {
                 UserViewModel user = await _service.GetUser(id);
-                user.Occuppations= await _service.GetOccupations();
+                user.Occupations= await _service.GetOccupations();
                 return View(user);
             }
             catch (ValidationException ex) 
@@ -80,13 +80,13 @@ namespace MovieLibrary.Web.Controllers
                 }
                 else 
                 {
-                    user.Occuppations= await _service.GetOccupations();
+                    user.Occupations= await _service.GetOccupations();
                     return View(user);
                 }
             }
             catch (ValidationException ex) 
             {
-               user.Occuppations = await _service.GetOccupations();
+                user.Occupations = await _service.GetOccupations();
                 ViewBag.Message = string.Format(ex.Message);
                 return View(user);
             }
