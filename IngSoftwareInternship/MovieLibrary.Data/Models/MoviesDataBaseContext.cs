@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace MovieLibrary.Data.Models
 {
-    public partial class MoviesDataBaseContext : DbContext
+    public partial class MoviesDataBaseContext : IdentityDbContext<IdentityUser>
     {
         public MoviesDataBaseContext()
         {
@@ -32,6 +34,7 @@ namespace MovieLibrary.Data.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Director>(entity =>
             {
                 entity.ToTable("Director");
