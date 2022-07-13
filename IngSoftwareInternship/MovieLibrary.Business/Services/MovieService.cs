@@ -91,32 +91,29 @@ namespace MovieLibrary.Business.Services
             movieFromDataBase.Genres = AddMovieGenre(movieFromDataBase.Genres, movieGenres);
             await _context.SaveChangesAsync();
         }
-        public async Task<List<MovieViewModel>> SearchMovie(string movieSearch, int genresSearch)
+        public async Task<List<MovieViewModel>> SearchMovie(string movieSearch, int genreId)
         {
             var filteredMovies = new List<Movie>();
-            if (string.IsNullOrEmpty(movieSearch) && genresSearch > 0)
+            if (!string.IsNullOrEmpty(movieSearch) && genreId > 0)
             {
-                Genre genre = _context.Genres.Where(x => x.GenreId == genresSearch).FirstOrDefault();
-                filteredMovies = _context.Movies.Include(movie=> movie.Directors).Include(movie => movie.Genres).Where(movie => movie.Genres.Contains(genre) && movie.DeleteDate == null).ToList();
-            }
-            else if (!string.IsNullOrEmpty(movieSearch) && genresSearch > 0)
-            {
-                filteredMovies = _context.Movies
+                filteredMovies = await _context.Movies
                     .Include(movie => movie.Directors)
                     .Include(movie => movie.Genres)
                     .Where(movie => movie.DeleteDate == null &&
-                    movie.Genres.Select(genre => genre.GenreId == genresSearch).FirstOrDefault() &&
-                    (movie.Caption.Contains(movieSearch) ||
-                    movie.Directors.Select(director =>(director.FirstName + " " + director.LastName).Contains(movieSearch)).FirstOrDefault())).ToList();
+                    (movie.Caption.Contains(movieSearch) || movie.Directors.Where(director => (director.FirstName + " " + director.LastName).Contains(movieSearch)).Any())
+                     && movie.Genres.Where(genre => genre.GenreId == genreId).Any())
+               .ToListAsync();
             }
             else 
             {
-                filteredMovies = _context.Movies
-                    .Include(movie=> movie.Genres)
-                    .Include(movie => movie.Directors)
-                    .Where(movie => movie.DeleteDate == null &&
-                    (movie.Caption.Contains(movieSearch) ||
-                    movie.Directors.Select(director => (director.FirstName + " " + director.LastName).Contains(movieSearch)).FirstOrDefault())).ToList();
+                filteredMovies = await _context.Movies
+                        .Include(movie => movie.Directors)
+                        .Include(movie => movie.Genres)
+                        .Where(movie => movie.DeleteDate == null &&
+                        (movie.Caption.Contains(movieSearch) ||
+                        movie.Directors.Where(director => (director.FirstName + " " + director.LastName).Contains(movieSearch)).Any()
+                       || movie.Genres.Where(genre => genre.GenreId == genreId).Any()))
+                       .ToListAsync();
             }
             return _mapper.Map<List<MovieViewModel>>(filteredMovies);
         }

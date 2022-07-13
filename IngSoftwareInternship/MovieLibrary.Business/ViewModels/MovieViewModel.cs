@@ -31,8 +31,8 @@ namespace MovieLibrary.Business.ViewModels
         public string SubmittedBy { get; set; } = null!;
         public int[] SelectedDirectors { get; set; } = null!;
         public int[] SelectedGenres { get; set; } = null!;
-        public  List<GenreViewModel>? GenreViewModels { get; set; } = null!;
-        public  List<DirectorViewModel>? DirectorViewModels { get; set; } = null!;
+        public List<GenreViewModel>? GenreViewModels { get; set; } = null!;
+        public List<DirectorViewModel>? DirectorViewModels { get; set; } = null!;
         public virtual ICollection<DirectorViewModel> Directors { get; set; }
         public virtual ICollection<GenreViewModel> Genres { get; set; }
         public string? ImagePath { get; set; }= null!;

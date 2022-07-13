@@ -23,7 +23,7 @@
 <div class="col-4 p-0 justify-content-end">
        <form asp-action="SearchMovie">
             <input class="form-control" type="text" name="movieSearch" placeholder="Search Movie.."/>
-            <select name="genresSearch" >
+            <select name="genreId" >
                 <option>Select genre...</option>
                 @foreach(GenreViewModel item in ViewBag.Genres)
                     {
