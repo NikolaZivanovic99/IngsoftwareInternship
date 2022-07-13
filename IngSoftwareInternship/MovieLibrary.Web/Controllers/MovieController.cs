@@ -27,10 +27,10 @@ namespace MovieLibrary.Web.Controllers
             return View(await _movieService.GetMovies());
         }
         [HttpPost]
-        public async Task<IActionResult> SearchMovie(string movieSearch,int genresSearch)
+        public async Task<IActionResult> SearchMovie(string movieSearch,int genreId)
         {
             ViewBag.Genres = await _genresService.GetGenres();
-            List<MovieViewModel> movies = await _movieService.SearchMovie(movieSearch,genresSearch);
+            List<MovieViewModel> movies = await _movieService.SearchMovie(movieSearch, genreId);
             return View("Index",movies);
         }
         public async Task<IActionResult> Create()

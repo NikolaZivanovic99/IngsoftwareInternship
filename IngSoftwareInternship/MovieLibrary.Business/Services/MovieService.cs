@@ -91,29 +91,29 @@ namespace MovieLibrary.Business.Services
             movieFromDataBase.Genres = AddMovieGenre(movieFromDataBase.Genres, movieGenres);
             await _context.SaveChangesAsync();
         }
-        public async Task<List<MovieViewModel>> SearchMovie(string movieSearch, int genresSearch)
+        public async Task<List<MovieViewModel>> SearchMovie(string movieSearch, int genreId)
         {
             var filteredMovies = new List<Movie>();
-            if (!string.IsNullOrEmpty(movieSearch) && genresSearch > 0)
+            if (!string.IsNullOrEmpty(movieSearch) && genreId > 0)
             {
-                filteredMovies = _context.Movies
+                filteredMovies = await _context.Movies
                     .Include(movie => movie.Directors)
                     .Include(movie => movie.Genres)
                     .Where(movie => movie.DeleteDate == null &&
                     (movie.Caption.Contains(movieSearch) || movie.Directors.Where(director => (director.FirstName + " " + director.LastName).Contains(movieSearch)).Any())
-                     && movie.Genres.Where(genre => genre.GenreId == genresSearch).Any())
-               .ToList();
+                     && movie.Genres.Where(genre => genre.GenreId == genreId).Any())
+               .ToListAsync();
             }
             else 
             {
-                filteredMovies = _context.Movies
+                filteredMovies = await _context.Movies
                         .Include(movie => movie.Directors)
                         .Include(movie => movie.Genres)
                         .Where(movie => movie.DeleteDate == null &&
                         (movie.Caption.Contains(movieSearch) ||
                         movie.Directors.Where(director => (director.FirstName + " " + director.LastName).Contains(movieSearch)).Any()
-                       || movie.Genres.Where(genre => genre.GenreId == genresSearch).Any()))
-                       .ToList();
+                       || movie.Genres.Where(genre => genre.GenreId == genreId).Any()))
+                       .ToListAsync();
             }
             return _mapper.Map<List<MovieViewModel>>(filteredMovies);
         }
