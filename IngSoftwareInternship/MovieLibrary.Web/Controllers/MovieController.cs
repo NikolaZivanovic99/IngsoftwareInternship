@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.Business;
 using MovieLibrary.Business.Services;
 using MovieLibrary.Business.Services.ServiceInterfaces;
@@ -20,19 +21,21 @@ namespace MovieLibrary.Web.Controllers
             _genresService = genresService;
             _webHostEnvironment = webHostEnvironment;
         }
-        
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             ViewBag.Genres= await _genresService.GetGenres();
             return View(await _movieService.GetMovies());
         }
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> SearchMovie(string movieSearch,int genreId)
         {
             ViewBag.Genres = await _genresService.GetGenres();
             List<MovieViewModel> movies = await _movieService.SearchMovie(movieSearch, genreId);
             return View("Index",movies);
         }
+        [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> Create()
         {
             MovieViewModel movie = new MovieViewModel();
@@ -42,6 +45,7 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create(MovieViewModel movie)
         {
             if (ModelState.IsValid)
@@ -58,7 +62,7 @@ namespace MovieLibrary.Web.Controllers
                 return View(movie);
             }
         }
-
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -76,6 +80,7 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(MovieViewModel movie)
         {
             try
@@ -102,7 +107,7 @@ namespace MovieLibrary.Web.Controllers
                 return View(movie);
             }           
         }
-
+        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
             try
@@ -115,7 +120,7 @@ namespace MovieLibrary.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-    
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -130,6 +135,7 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id) 
         {
             try

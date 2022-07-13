@@ -1,6 +1,8 @@
 ﻿@using MovieLibrary.Business.ViewModels
 @model IEnumerable<MovieLibrary.Business.ViewModels.MovieViewModel>
-
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 @{
     ViewData["Title"] = "Index";
 }
@@ -8,7 +10,10 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a><br/>
+    @if (User.IsInRole("Administrator"))
+    {
+        <a asp-action="Create">Create New Movie</a><br/>
+    } 
     <a asp-action="Index">Get all movies</a>
 </p>
 @if (@TempData["AlertMessage"] != null)
@@ -79,9 +84,17 @@
                 @Html.DisplayFor(modelItem => item.GenresCsv)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.MovieId }) |
-                @Html.ActionLink("Details", "Details", new { id=item.MovieId}) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.MovieId})
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <p>@Html.ActionLink("Edit", "Edit", new { id=item.MovieId }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.MovieId }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.MovieId }) 
+                        </p>
+                    }else
+                    {
+                         @Html.ActionLink("Details", "Details", new { id=item.MovieId})
+                    }
+                    
             </td>
         </tr>
 }
