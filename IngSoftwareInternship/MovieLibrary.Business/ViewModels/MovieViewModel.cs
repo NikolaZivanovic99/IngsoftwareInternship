@@ -37,6 +37,7 @@ namespace MovieLibrary.Business.ViewModels
         public virtual ICollection<GenreViewModel> Genres { get; set; }
         public string? ImagePath { get; set; }= null!;
         [NotMapped]
+        [Required]
         public IFormFile? Image { get; set; }
         public string DirectorCsv { get
             {

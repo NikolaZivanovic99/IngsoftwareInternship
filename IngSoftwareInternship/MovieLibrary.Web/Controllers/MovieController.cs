@@ -8,6 +8,7 @@ using MovieLibrary.Data.Models;
 
 namespace MovieLibrary.Web.Controllers
 {
+    [Authorize]
     public class MovieController : Controller
     {
         private readonly IMovieService _movieService;
@@ -20,15 +21,13 @@ namespace MovieLibrary.Web.Controllers
             _directorService = directorService;
             _genresService = genresService;
             _webHostEnvironment = webHostEnvironment;
-        }
-        [Authorize]
+        }      
         public async Task<IActionResult> Index()
         {
             ViewBag.Genres= await _genresService.GetGenres();
             return View(await _movieService.GetMovies());
         }
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> SearchMovie(string movieSearch,int genreId)
         {
             ViewBag.Genres = await _genresService.GetGenres();
@@ -94,6 +93,7 @@ namespace MovieLibrary.Web.Controllers
                 }
                 else 
                 {
+                    movie = await _movieService.GetMovie(movie.MovieId);
                     movie.DirectorViewModels = await _directorService.GetDirectors();
                     movie.GenreViewModels= await _genresService.GetGenres();
                     return View(movie);
@@ -107,7 +107,6 @@ namespace MovieLibrary.Web.Controllers
                 return View(movie);
             }           
         }
-        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
             try

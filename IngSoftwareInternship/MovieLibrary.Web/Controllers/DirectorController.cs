@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.Business.Services.ServiceInterfaces;
 using MovieLibrary.Business.ViewModels;
 using System.ComponentModel.DataAnnotations;
 
 namespace MovieLibrary.Web.Controllers
 {
+    [Authorize]
     public class DirectorController : Controller
     {
         private readonly IDirectorService _service;
@@ -18,12 +20,14 @@ namespace MovieLibrary.Web.Controllers
         {
             return View(await _service.GetDirectors());
         }
+        [Authorize(Roles ="Administrator")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create(DirectorViewModel director)
         {
             if (ModelState.IsValid)
@@ -38,6 +42,7 @@ namespace MovieLibrary.Web.Controllers
                 return View(director);
             }
         }
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -53,6 +58,7 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(DirectorViewModel director)
         {
             try
@@ -87,7 +93,7 @@ namespace MovieLibrary.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -102,6 +108,7 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             try
