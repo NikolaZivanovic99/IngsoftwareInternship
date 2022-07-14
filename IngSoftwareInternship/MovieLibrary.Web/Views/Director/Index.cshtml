@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<MovieLibrary.Business.ViewModels.DirectorViewModel>
-
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 @{
     ViewData["Title"] = "Index";
 }
@@ -7,7 +9,10 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @if (User.IsInRole("Administrator"))
+    {
+        <a asp-action="Create">Create New</a>
+    }
 </p>
 @if (@TempData["AlertMessage"] != null)
 {
@@ -53,10 +58,19 @@
                 @Html.DisplayFor(modelItem => item.DateOfBirth)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.DirectorId }) |
-                @Html.ActionLink("Details", "Details", new { id=item.DirectorId }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.DirectorId })
-            </td>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <p>
+                        @Html.ActionLink("Edit", "Edit", new { id=item.DirectorId }) |
+                        @Html.ActionLink("Details", "Details", new { id=item.DirectorId }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.DirectorId })
+                        </p>
+                    }else
+                    {
+                        @Html.ActionLink("Details", "Details", new { id=item.DirectorId })
+
+                    }
+                </td>
         </tr>
 }
     </tbody>

@@ -5,7 +5,7 @@ using MovieLibrary.Business.Services;
 using MovieLibrary.Business.Services.ServiceInterfaces;
 using MovieLibrary.Data.Models;
 using Microsoft.AspNetCore.Identity;
-
+using MovieLibrary.Data.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 //var connectionString = builder.Configuration.GetConnectionString("MovieLibraryWebContextConnection") ?? throw new InvalidOperationException("Connection string 'MovieLibraryWebContextConnection' not found.");
@@ -23,6 +23,7 @@ builder.Services.AddDbContext<MoviesDataBaseContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("dbconn")));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MoviesDataBaseContext>();
 
 var mapperConfig = new MapperConfiguration(mc =>
@@ -34,7 +35,10 @@ IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
 
+
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -48,6 +52,14 @@ app.UseStaticFiles();
 app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
+
+var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+using (var scope = scopeFactory.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    SeedData.Seed(userManager, roleManager);
+}
 
 app.UseEndpoints(endpoints =>
 {

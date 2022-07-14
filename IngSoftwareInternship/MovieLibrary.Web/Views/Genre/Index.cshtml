@@ -7,7 +7,10 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @if (User.IsInRole("Administrator"))
+    {
+        <a asp-action="Create">Create New</a>
+    }
 </p>
 @if (@TempData["AlertMessage"] != null)
 {
@@ -40,9 +43,18 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.GenreId }) |
-                @Html.ActionLink("Details", "Details", new { id=item.GenreId }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.GenreId })
+                @if (User.IsInRole("Administrator"))
+                {
+                    <p>
+                        @Html.ActionLink("Edit", "Edit", new { id=item.GenreId }) |
+                        @Html.ActionLink("Details", "Details", new { id=item.GenreId }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.GenreId })
+                        </p>
+                }
+                else
+                {
+                    @Html.ActionLink("Details", "Details", new { id=item.GenreId })
+                }
             </td>
         </tr>
 }
