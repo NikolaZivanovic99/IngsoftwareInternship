@@ -8,10 +8,9 @@ namespace MovieLibrary.Business.Services.ServiceInterfaces
     public interface IUserService
     {
         Task<List<UserViewModel>> GetUsers();
-        Task AddUser(UserViewModel user);
-        Task<UserViewModel> GetUser(int id);
+        Task<UserViewModel> GetUser(string id);
         Task UpdateUser(UserViewModel user);
-        Task DeleteUser(int? id);
+        Task DeleteUser(string? id);
         Task<List<OccupationViewModel>> GetOccupations();
     }
 }

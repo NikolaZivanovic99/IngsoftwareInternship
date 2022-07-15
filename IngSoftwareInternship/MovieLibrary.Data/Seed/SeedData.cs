@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MovieLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +10,27 @@ namespace MovieLibrary.Data.Seed
 {
     public static class SeedData
     {
-        public static void Seed(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) 
+        public static void Seed(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager) 
         {
             SeedRoles(roleManager);
             SeedUsers(userManager);
         }
-        public static void SeedUsers(UserManager<IdentityUser> userManager)
+        public static void SeedUsers(UserManager<ApplicationUser> userManager)
         {
             if (userManager.FindByNameAsync("admin").Result == null) 
             {
-                var user = new IdentityUser
+                var user = new ApplicationUser
                 {
                     UserName = "admin@gmail.com",
                     Email = "admin@gmail.com",
                     EmailConfirmed = true,
-                    SecurityStamp = Guid.NewGuid().ToString()
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    FirstName = "admin",
+                    LastName = "admin",
+                    Address = "admin",
+                    IdNumber = "admin",
+                    OccupationId = 4,
+                    InsertDate = DateTime.Now
                 };
                 var result = userManager.CreateAsync(user, "Password123.").Result;
                 if (result.Succeeded) 

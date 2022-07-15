@@ -13,7 +13,7 @@ namespace MovieLibrary.Business.Mapping
     {
         public MappingProfile() 
         {
-            CreateMap<User, UserViewModel>().ReverseMap();
+            CreateMap<ApplicationUser, UserViewModel>().ReverseMap();
             CreateMap<Occupation, OccupationViewModel>().ReverseMap();
             CreateMap<Movie, MovieViewModel>().ReverseMap();
             CreateMap<Genre, GenreViewModel>().ReverseMap();

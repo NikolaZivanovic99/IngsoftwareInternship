@@ -7,12 +7,12 @@ namespace MovieLibrary.Data.Models
     {
         public Occupation()
         {
-            Users = new HashSet<User>();
+            Users = new HashSet<ApplicationUser>();
         }
 
         public int OccupationId { get; set; }
         public string Caption { get; set; } = null!;
 
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<ApplicationUser> Users { get; set; }
     }
 }

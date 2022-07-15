@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.Business;
 using MovieLibrary.Business.Services.ServiceInterfaces;
 using MovieLibrary.Business.ViewModels;
@@ -6,6 +7,7 @@ using MovieLibrary.Data.Models;
 
 namespace MovieLibrary.Web.Controllers
 {
+    [Authorize(Roles ="Administrator")]
     public class UserController : Controller
     {
         private readonly IUserService _service;
@@ -19,40 +21,7 @@ namespace MovieLibrary.Web.Controllers
         {
             return View( await _service.GetUsers());
         }
-
-        public async Task<IActionResult> Create()
-        {
-            UserViewModel user =new UserViewModel();
-            user.Occupations= await _service.GetOccupations();
-            return View(user);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(UserViewModel user)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    await _service.AddUser(user);
-                    TempData["AlertMessage"] = "Added Successfully..";
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    user.Occupations= await _service.GetOccupations();
-                    return View(user);
-                }
-            }
-            catch (ValidationException ex) 
-            {
-                ViewBag.Message = string.Format(ex.Message);
-                 user.Occupations = await _service.GetOccupations();
-                return View(user);
-            }
-        }
-
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string id)
         {
             try
             {
@@ -92,7 +61,7 @@ namespace MovieLibrary.Web.Controllers
             }
         }
 
-        public async  Task<IActionResult> Details(int id) 
+        public async  Task<IActionResult> Details(string id) 
         {
             try
             {
@@ -105,7 +74,7 @@ namespace MovieLibrary.Web.Controllers
             } 
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {
@@ -119,7 +88,7 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Deletee(string? id)
         {
             try
             {
