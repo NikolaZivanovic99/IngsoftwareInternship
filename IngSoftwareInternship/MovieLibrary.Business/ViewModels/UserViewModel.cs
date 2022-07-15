@@ -12,7 +12,7 @@ namespace MovieLibrary.Business.ViewModels
     public class UserViewModel
     {
 
-        public int UserId { get; set; }
+        public string Id { get; set; } = null!;
 
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "First Name is required!")]
@@ -35,6 +35,8 @@ namespace MovieLibrary.Business.ViewModels
 
         [Display(Name = "Occupation")]
         public int OccupationId { get; set; }
+
+        public string? Email { get; set; } = null!;
 
         public List<OccupationViewModel>? Occupations { get; set; } = null!;
 

@@ -22,7 +22,7 @@ builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddDbContext<MoviesDataBaseContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("dbconn")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MoviesDataBaseContext>();
 
@@ -57,7 +57,7 @@ var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 using (var scope = scopeFactory.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     SeedData.Seed(userManager, roleManager);
 }
 

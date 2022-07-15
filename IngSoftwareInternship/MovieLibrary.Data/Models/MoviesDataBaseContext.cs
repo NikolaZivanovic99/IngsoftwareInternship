@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace MovieLibrary.Data.Models
 {
-    public partial class MoviesDataBaseContext : IdentityDbContext<IdentityUser>
+    public partial class MoviesDataBaseContext : IdentityDbContext<ApplicationUser>
     {
         public MoviesDataBaseContext()
         {
@@ -22,7 +22,6 @@ namespace MovieLibrary.Data.Models
         public virtual DbSet<Genre> Genres { get; set; } = null!;
         public virtual DbSet<Movie> Movies { get; set; } = null!;
         public virtual DbSet<Occupation> Occupations { get; set; } = null!;
-        public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -114,34 +113,21 @@ namespace MovieLibrary.Data.Models
 
                 entity.Property(e => e.Caption).HasMaxLength(50);
             });
-
-            modelBuilder.Entity<User>(entity =>
+            modelBuilder.Entity<ApplicationUser>(entity=>
             {
-                entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.Property(e => e.Address).HasMaxLength(512);
-
-                entity.Property(e => e.DeleteDate).HasColumnType("datetime");
-
-                entity.Property(e => e.FirstName).HasMaxLength(50);
-
-                entity.Property(e => e.IdNumber)
-                    .HasMaxLength(50)
-                    .HasColumnName("IDNumber");
-
-                entity.Property(e => e.InsertDate).HasColumnType("datetime");
-
-                entity.Property(e => e.LastName).HasMaxLength(50);
-
-                entity.Property(e => e.OccupationId).HasColumnName("OccupationID");
+                entity.Property(e => e.FirstName).HasMaxLength(50).IsRequired();
+                entity.Property(e => e.LastName).HasMaxLength(50).IsRequired();
+                entity.Property(e => e.Address).HasMaxLength(512).IsRequired();
+                entity.Property(e=>e.IdNumber).HasMaxLength(50).IsRequired();
+                entity.Property(e => e.InsertDate).HasColumnType("datetime").IsRequired();
+                entity.Property(e => e.OccupationId).HasColumnName("OccupationId");
 
                 entity.HasOne(d => d.Occupation)
-                    .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.OccupationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Users_Users");
+                .WithMany(p => p.Users)
+                .HasForeignKey(d => d.OccupationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Users_Users");
             });
-
             OnModelCreatingPartial(modelBuilder);
         }
 
