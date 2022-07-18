@@ -7,20 +7,23 @@ using MovieLibrary.Data.Models;
 
 namespace MovieLibrary.Web.Controllers
 {
-    [Authorize(Roles ="Administrator")]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserService _service;
+        private readonly IMovieService _movieService;
 
-        public UserController(IUserService service)
+        public UserController(IUserService service, IMovieService movieService)
         {
             _service = service;
+            _movieService = movieService;
         }
-
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
             return View( await _service.GetUsers());
         }
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(string id)
         {
             try
@@ -37,6 +40,7 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(UserViewModel user)
         {
             try
@@ -73,7 +77,20 @@ namespace MovieLibrary.Web.Controllers
                 return RedirectToAction("Index");
             } 
         }
-
+        public async Task<IActionResult> WatchList(string id)
+        {
+            try
+            {
+                UserViewModel user = await _service.GetUser(id);
+                return View(user.Movies);
+            }
+            catch (ValidationException ex)
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(string id)
         {
             try
@@ -88,6 +105,7 @@ namespace MovieLibrary.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Deletee(string? id)
         {
             try
@@ -97,6 +115,33 @@ namespace MovieLibrary.Web.Controllers
                 return RedirectToAction("Index");
             }
             catch (ValidationException ex) 
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+        public async Task<IActionResult> DeleteMovie(int id)
+        {
+            try
+            {
+                return View(await _movieService.GetMovie(id));
+            }
+            catch (ValidationException ex)
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteMovie(int id,string userId)
+        {
+            try
+            {
+                await _service.DeleteMovie(id,userId);
+                TempData["AlertMessage"] = "User Deleted Successfully..!";
+                return RedirectToAction("Index","Movie");
+            }
+            catch (ValidationException ex)
             {
                 TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");

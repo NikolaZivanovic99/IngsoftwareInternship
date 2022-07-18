@@ -8,6 +8,7 @@ using System.Linq;
 using System.IO;
 using MovieLibrary.Business.Helpers;
 using MovieLibrary.Business.Services.ServiceInterfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace MovieLibrary.Business.Services
 {
@@ -15,11 +16,13 @@ namespace MovieLibrary.Business.Services
     {
         private readonly MoviesDataBaseContext _context;
         private readonly IMapper _mapper;
-        
-        public MovieService(MoviesDataBaseContext context, IMapper mapper)
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public MovieService(MoviesDataBaseContext context, IMapper mapper,UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _mapper = mapper;
+            _userManager = userManager;
         }
         public async Task AddMovie(MovieViewModel movieModel,string wwwRootPath)
         {
@@ -57,8 +60,18 @@ namespace MovieLibrary.Business.Services
 
         public async Task<List<MovieViewModel>> GetMovies()
         {
-            var movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Where(x => x.DeleteDate == null).ToListAsync();
+            var movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Include(x=>x.Users).Where(x => x.DeleteDate == null).ToListAsync();
             return _mapper.Map<List<MovieViewModel>>(movies);
+        }
+        public async Task AddToWatchList(int? id,string userId)
+        {
+            var user = await _userManager.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            if (user == null) 
+            {
+                throw new ValidationException("User does not exist!");
+            }
+            user.Movies.Add(await _context.Movies.Where(x => x.MovieId == id).FirstOrDefaultAsync());
+            await _userManager.UpdateAsync(user);
         }
         public async Task UpdateMovie(MovieViewModel movieModel,string wwwRootPath)
         {
@@ -163,6 +176,6 @@ namespace MovieLibrary.Business.Services
             }
             movieGenres = DeleteMovieGenre(movieGenres, selectedGenres);
             return movieGenres;
-        } 
+        }        
     }
 }

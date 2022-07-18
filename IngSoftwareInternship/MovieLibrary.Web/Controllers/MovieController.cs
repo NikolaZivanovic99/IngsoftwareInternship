@@ -149,6 +149,33 @@ namespace MovieLibrary.Web.Controllers
                 TempData["AlertMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }           
-        }      
+        }
+        public async Task<IActionResult> AddToWatchList(int id)
+        {
+            try
+            {
+                return View(await _movieService.GetMovie(id));
+            }
+            catch (ValidationException ex)
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddToWatchList(int? id,string userId)
+        {
+            try
+            {
+                await _movieService.AddToWatchList(id,userId);
+                TempData["AlertMessage"] = "Movie Added Successfully..!";
+                return RedirectToAction("Index");
+            }
+            catch (ValidationException ex)
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
     }
 }

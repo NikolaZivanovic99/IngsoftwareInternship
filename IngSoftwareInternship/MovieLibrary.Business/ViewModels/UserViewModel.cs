@@ -11,7 +11,10 @@ namespace MovieLibrary.Business.ViewModels
 {
     public class UserViewModel
     {
-
+        public UserViewModel()
+        {
+            Movies = new HashSet<MovieViewModel>();
+        }
         public string Id { get; set; } = null!;
 
         [Display(Name = "First Name")]
@@ -41,6 +44,7 @@ namespace MovieLibrary.Business.ViewModels
         public List<OccupationViewModel>? Occupations { get; set; } = null!;
 
         public virtual OccupationViewModel? Occupation { get; set; } = null!;
-        
+        public virtual ICollection<MovieViewModel> Movies { get; set; }
+
     }
 }

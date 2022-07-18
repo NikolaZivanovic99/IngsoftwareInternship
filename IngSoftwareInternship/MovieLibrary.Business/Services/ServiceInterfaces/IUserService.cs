@@ -12,5 +12,6 @@ namespace MovieLibrary.Business.Services.ServiceInterfaces
         Task UpdateUser(UserViewModel user);
         Task DeleteUser(string? id);
         Task<List<OccupationViewModel>> GetOccupations();
+        Task DeleteMovie(int movieId, string userId);
     }
 }

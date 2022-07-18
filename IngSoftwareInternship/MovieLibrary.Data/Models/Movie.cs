@@ -9,6 +9,7 @@ namespace MovieLibrary.Data.Models
         {
             Directors = new HashSet<Director>();
             Genres = new HashSet<Genre>();
+            Users = new HashSet<ApplicationUser>();
         }
 
         public int MovieId { get; set; }
@@ -21,5 +22,6 @@ namespace MovieLibrary.Data.Models
 
         public virtual ICollection<Director> Directors { get; set; }
         public virtual ICollection<Genre> Genres { get; set; }
+        public virtual ICollection<ApplicationUser> Users { get; set; }
     }
 }

@@ -105,6 +105,18 @@ namespace MovieLibrary.Data.Models
 
                             j.ToTable("MovieGenre");
                         });
+                entity.HasMany(d => d.Users)
+                    .WithMany(p => p.Movies)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "MovieUser",
+                        l => l.HasOne<ApplicationUser>().WithMany().HasForeignKey("Id").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_MovieUsers_Users"),
+                        r => r.HasOne<Movie>().WithMany().HasForeignKey("MovieId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_MovieUsers_Movies"),
+                        j =>
+                        {
+                            j.HasKey("MovieId", "Id");
+
+                            j.ToTable("MovieUser");
+                        });
             });
 
             modelBuilder.Entity<Occupation>(entity =>

@@ -11,6 +11,10 @@ namespace MovieLibrary.Data.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public ApplicationUser()
+        {
+            Movies = new HashSet<Movie>();
+        }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; }=null!;
         public string Address { get; set; } = null!;
@@ -19,6 +23,7 @@ namespace MovieLibrary.Data.Models
         public DateTime InsertDate { get; set; }
         public DateTime? DeleteDate { get; set; }
         public virtual Occupation Occupation { get; set; } = null!;
+        public virtual ICollection<Movie> Movies { get; set; }
 
     }
 }
