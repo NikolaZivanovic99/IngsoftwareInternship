@@ -89,11 +89,16 @@
                     {
                         <p>@Html.ActionLink("Edit", "Edit", new { id=item.MovieId }) |
                         @Html.ActionLink("Details", "Details", new { id = item.MovieId }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.MovieId }) 
+                        @Html.ActionLink("Delete", "Delete", new { id = item.MovieId }) |
+                        @Html.ActionLink("AddToWatchList","AddToWatchList", new {id=item.MovieId})
                         </p>
                     }else
                     {
-                         @Html.ActionLink("Details", "Details", new { id=item.MovieId})
+                        <p>
+                             @Html.ActionLink("Details", "Details", new { id=item.MovieId})|
+                         @Html.ActionLink("AddToWatchList","AddToWatchList", new {id=item.MovieId})
+                        </p>
+                        
                     }
                     
             </td>

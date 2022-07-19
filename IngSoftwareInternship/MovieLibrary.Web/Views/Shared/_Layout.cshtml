@@ -15,6 +15,77 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
 
+    <style>
+        /* Navbar container */
+.my_navbar {
+  overflow: hidden;
+  background-color: #333;
+  font-family: Arial;
+}
+
+/* Links inside the navbar */
+.my_navbar a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* The dropdown container */
+.my_dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+/* Dropdown button */
+.my_dropdown .my_dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit; /* Important for vertical align on mobile phones */
+  margin: 0; /* Important for vertical align on mobile phones */
+}
+
+/* Add a red background color to navbar links on hover */
+.my_navbar a:hover, .my_dropdown:hover .my_dropbtn {
+  background-color: red;
+}
+
+/* Dropdown content (hidden by default) */
+.my_dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.my_dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+/* Add a grey background color to dropdown links on hover */
+.my_dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.my_dropdown:hover .my_dropdown-content {
+  display: block;
+}
+    </style>
 </head>
 <body>
     <header>
@@ -30,7 +101,17 @@
                 {
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Movie" asp-action="Index">Movies</a>
+                                 <div class="my_navbar">
+                                      <div class="my_dropdown">
+                                        <button class="my_dropbtn">Movies
+                                          <i class="fa fa-caret-down"></i>
+                                        </button>
+                                        <div class="my_dropdown-content">
+                                          <a class="nav-link text-dark" asp-area="" asp-controller="Movie" asp-action="Index" >All Movies</a>
+                                          <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="WatchList" asp-route-id="@UserManager.GetUserId(User)">Watch list</a>
+                                        </div>
+                                  </div>
+                            </div>
                         </li>
                         @if (User.IsInRole("Administrator"))
                          {
@@ -49,7 +130,7 @@
                 }
                     <partial name="_LoginPartial"/>
                 </div>
-            </div>
+            
         </nav>
     </header>
     <div class="container">

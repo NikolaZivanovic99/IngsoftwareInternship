@@ -1,0 +1,62 @@
+﻿@using MovieLibrary.Business.ViewModels
+@model IEnumerable<MovieLibrary.Business.ViewModels.MovieViewModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>List of movies to watch</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Caption)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReleaseYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SubmittedBy)
+            </th>
+             <th>
+                @Html.DisplayNameFor(model => model.Directors)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genres)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+            <tr>
+                <td>
+                <img src="@("~/image/" + item.ImagePath)" asp-append-version="true" height="150px" width="150px"> 
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Caption)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubmittedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorCsv)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GenresCsv)
+            </td>
+            <td>
+                @Html.ActionLink("DeleteMovie", "DeleteMovie", new {  id=item.MovieId}) |
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+

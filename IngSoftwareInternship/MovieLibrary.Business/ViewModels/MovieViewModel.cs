@@ -16,6 +16,7 @@ namespace MovieLibrary.Business.ViewModels
         {
             Directors = new HashSet<DirectorViewModel>();
             Genres = new HashSet<GenreViewModel>();
+            Users = new HashSet<UserViewModel>();
         }
         public int MovieId { get; set; }
         [Required(ErrorMessage = "Caption is required!")]
@@ -35,6 +36,7 @@ namespace MovieLibrary.Business.ViewModels
         public List<DirectorViewModel>? DirectorViewModels { get; set; } = null!;
         public virtual ICollection<DirectorViewModel> Directors { get; set; }
         public virtual ICollection<GenreViewModel> Genres { get; set; }
+        public virtual ICollection<UserViewModel> Users { get; set; }
         public string? ImagePath { get; set; }= null!;
         [NotMapped]
         [Required]
@@ -50,6 +52,12 @@ namespace MovieLibrary.Business.ViewModels
                 return string.Join(",", Genres.Select(x => x.Caption));
             }
         }
-      
+        public string UsersCsv
+        {
+            get
+            {
+                return string.Join(",", Users.Select(x => x.Address));
+            }
+        }
     }
 }

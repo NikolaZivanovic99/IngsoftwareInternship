@@ -20,6 +20,19 @@ namespace MovieLibrary.Business.Services
             _mapper = mapper;
             _userManager = userManager;
         }
+
+        public async Task DeleteMovie(int movieId, string userId)
+        {
+            ApplicationUser user = _userManager.Users.Include(x=>x.Movies).Where(x => x.Id == userId).FirstOrDefault();
+            if (user == null) 
+            {
+                throw new ValidationException("User does not exist");
+            }
+            Movie movie = _context.Movies.Where(x => x.MovieId == movieId).FirstOrDefault();
+            user.Movies.Remove(movie);        
+            await _userManager.UpdateAsync(user);
+        }
+
         public async Task DeleteUser(string? id)
         {
             ApplicationUser user = await _userManager.Users.Where(x=> x.Id==id && x.DeleteDate==null).FirstOrDefaultAsync();
@@ -38,7 +51,7 @@ namespace MovieLibrary.Business.Services
         }
         public async Task<UserViewModel> GetUser(string id)
         {
-            var user = await _userManager.Users.Include(x=>x.Occupation).Where(x => x.Id == id && x.DeleteDate==null).FirstOrDefaultAsync();
+            var user = await _userManager.Users.Include(x=>x.Occupation).Include(x=>x.Movies).ThenInclude(x=>x.Directors).Include(x=>x.Movies).ThenInclude(y=>y.Genres).Where(x => x.Id == id && x.DeleteDate==null).FirstOrDefaultAsync();
             if (user == null)
             {
                 throw new ValidationException("The user with the given identifier does not exist. Please try again");
