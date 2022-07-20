@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieLibrary.Data.Models;
 
@@ -11,9 +12,10 @@ using MovieLibrary.Data.Models;
 namespace MovieLibrary.Data.Migrations
 {
     [DbContext(typeof(MoviesDataBaseContext))]
-    partial class MoviesDataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220719104300_Add-Rate-table")]
+    partial class AddRatetable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -430,11 +432,9 @@ namespace MovieLibrary.Data.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("UserId");
 
-                    b.Property<DateTime>("InsertDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("Rates")
-                        .HasColumnType("int");
+                    b.Property<string>("Rates")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RateId");
 

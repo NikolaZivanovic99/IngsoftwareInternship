@@ -177,5 +177,42 @@ namespace MovieLibrary.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        public async Task<IActionResult> Rate(int id)
+        {
+            try
+            {
+                RateViewModel rate = new RateViewModel { MovieId = id };
+
+                return View(rate);
+            }
+            catch (ValidationException ex)
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Ratess(RateViewModel rate)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await _movieService.RateMovie(rate);
+                    TempData["AlertMessage"] = "Rated successfully.";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                   
+                    return View("Rate",rate);
+                }
+            }
+            catch (ValidationException ex)
+            {
+                TempData["AlertMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
     }
 }

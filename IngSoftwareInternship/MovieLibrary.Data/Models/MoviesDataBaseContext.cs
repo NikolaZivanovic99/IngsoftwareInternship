@@ -22,6 +22,7 @@ namespace MovieLibrary.Data.Models
         public virtual DbSet<Genre> Genres { get; set; } = null!;
         public virtual DbSet<Movie> Movies { get; set; } = null!;
         public virtual DbSet<Occupation> Occupations { get; set; } = null!;
+        public virtual DbSet<Rate> Rate { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -139,6 +140,35 @@ namespace MovieLibrary.Data.Models
                 .HasForeignKey(d => d.OccupationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_Users");
+            });
+
+            modelBuilder.Entity<Rate>(entity =>
+            {
+                entity.HasKey(e => e.RateId);
+                entity.Property(e => e.Comment).HasMaxLength(300);
+                entity.Property(e => e.Rates);
+                entity.Property(e => e.Id).HasColumnName("UserId");
+                entity.Property(e => e.InsertDate).HasColumnType("datetime").IsRequired();
+
+                entity.HasOne(d => d.User)
+                .WithMany(p => p.Rates)
+                .HasForeignKey(d=>d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Users_Rate");
+
+                entity.HasMany(d => d.Movies)
+                   .WithMany(p => p.Rates)
+                   .UsingEntity<Dictionary<string, object>>(
+                       "MovieRate",
+                       l => l.HasOne<Movie>().WithMany().HasForeignKey("MovieId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_MovieRates_Movies"),
+                       r => r.HasOne<Rate>().WithMany().HasForeignKey("Id").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_MovieRates_Rates"),
+                       j =>
+                       {
+                           j.HasKey("MovieId", "Id");
+
+                           j.ToTable("MovieRate");
+                       });
+
             });
             OnModelCreatingPartial(modelBuilder);
         }

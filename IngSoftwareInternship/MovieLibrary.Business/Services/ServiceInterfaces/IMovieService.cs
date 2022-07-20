@@ -14,5 +14,6 @@ namespace MovieLibrary.Business.Services.ServiceInterfaces
         Task DeleteMovie(int? id,string pathRoot);
         Task<List<MovieViewModel>> SearchMovie(string movieSearch,int genreId);
         Task AddToWatchList(int? id,string userId);
+        Task RateMovie(RateViewModel rate);
     }
 }

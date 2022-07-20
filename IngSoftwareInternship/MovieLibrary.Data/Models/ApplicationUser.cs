@@ -14,6 +14,7 @@ namespace MovieLibrary.Data.Models
         public ApplicationUser()
         {
             Movies = new HashSet<Movie>();
+            Rates = new HashSet<Rate>();
         }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; }=null!;
@@ -24,6 +25,8 @@ namespace MovieLibrary.Data.Models
         public DateTime? DeleteDate { get; set; }
         public virtual Occupation Occupation { get; set; } = null!;
         public virtual ICollection<Movie> Movies { get; set; }
+
+        public virtual ICollection<Rate> Rates { get; set; }
 
     }
 }
