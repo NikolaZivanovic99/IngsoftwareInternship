@@ -17,6 +17,7 @@ namespace MovieLibrary.Business.ViewModels
             Directors = new HashSet<DirectorViewModel>();
             Genres = new HashSet<GenreViewModel>();
             Users = new HashSet<UserViewModel>();
+            Rates = new HashSet<RateViewModel>();
         }
         public int MovieId { get; set; }
         [Required(ErrorMessage = "Caption is required!")]
@@ -37,10 +38,14 @@ namespace MovieLibrary.Business.ViewModels
         public virtual ICollection<DirectorViewModel> Directors { get; set; }
         public virtual ICollection<GenreViewModel> Genres { get; set; }
         public virtual ICollection<UserViewModel> Users { get; set; }
+        public virtual ICollection<RateViewModel> Rates { get; set; }
         public string? ImagePath { get; set; }= null!;
         [NotMapped]
         [Required]
         public IFormFile? Image { get; set; }
+
+        public int? Rate { get; set; }
+        public decimal AvgRate { get; set; }
         public string DirectorCsv { get
             {
                 return string.Join(",", Directors.Select(x=> string.Join(" ",x.FirstName,x.LastName)));

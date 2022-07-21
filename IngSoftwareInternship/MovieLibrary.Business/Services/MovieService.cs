@@ -50,7 +50,7 @@ namespace MovieLibrary.Business.Services
         }
         public async Task<MovieViewModel> GetMovie(int id)
         {
-            Movie movie = await _context.Movies.Where(x => x.MovieId == id && x.DeleteDate == null).Include(c => c.Directors).Include(d => d.Genres).FirstOrDefaultAsync();
+            Movie movie = await _context.Movies.Where(x => x.MovieId == id && x.DeleteDate == null).Include(c => c.Directors).Include(d => d.Genres).Include(x=>x.Rates).FirstOrDefaultAsync();
             if (movie == null || movie.DeleteDate != null)
             {
                 throw new ValidationException("The movie with the given ID does not exist. Please try again!");
@@ -60,7 +60,7 @@ namespace MovieLibrary.Business.Services
 
         public async Task<List<MovieViewModel>> GetMovies()
         {
-            var movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Include(x=>x.Users).Where(x => x.DeleteDate == null).ToListAsync();
+            var movies = await _context.Movies.Include(c => c.Directors).Include(d => d.Genres).Include(x=>x.Users).Include(x=>x.Rates).Where(x => x.DeleteDate == null).ToListAsync();
             return _mapper.Map<List<MovieViewModel>>(movies);
         }
         public async Task AddToWatchList(int? id,string userId)
@@ -72,6 +72,34 @@ namespace MovieLibrary.Business.Services
             }
             user.Movies.Add(await _context.Movies.Where(x => x.MovieId == id).FirstOrDefaultAsync());
             await _userManager.UpdateAsync(user);
+        }
+        public async Task RateMovie(RateViewModel rateView)
+        {
+            Movie movie = await _context.Movies.Include(x => x.Rates).Where(x => x.MovieId == rateView.MovieId).FirstOrDefaultAsync();
+            if (movie.Rates.Where(x => x.UserId == rateView.UserId).FirstOrDefault()==null)
+            {
+                Rate rate = _mapper.Map<Rate>(rateView);
+                rate.InsertDate = DateTime.Now;
+                _context.Rate.Add(rate);
+                movie.Rates.Add(rate);
+                movie.AvgRate = Helpers.RateHelper.AvgRate(_mapper.Map<List<RateViewModel>>(movie.Rates));
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new ValidationException("You are rated this movie!");
+            }
+        }
+        public async Task<List<MovieViewModel>> FindPopular()
+        {
+            DateTime filterDate = DateTime.Now.AddDays(-30);
+            var movies = await _context.Movies.OrderByDescending(x => x.Rates.Count).Include(x => x.Rates.Where(x=>x.InsertDate>filterDate)).ToListAsync();
+            foreach (var movie in movies) 
+            {
+                movie.AvgRate = Helpers.RateHelper.AvgRate(_mapper.Map<List<RateViewModel>>(movie.Rates));
+            }
+            movies.Take(10);
+            return _mapper.Map<List<MovieViewModel>>(movies);
         }
         public async Task UpdateMovie(MovieViewModel movieModel,string wwwRootPath)
         {
@@ -176,6 +204,6 @@ namespace MovieLibrary.Business.Services
             }
             movieGenres = DeleteMovieGenre(movieGenres, selectedGenres);
             return movieGenres;
-        }        
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace MovieLibrary.Business.Mapping
             CreateMap<Movie, MovieViewModel>().ReverseMap();
             CreateMap<Genre, GenreViewModel>().ReverseMap();
             CreateMap<Director, DirectorViewModel>().ReverseMap();
+            CreateMap<Rate, RateViewModel>().ReverseMap();
         }
     }
 }
