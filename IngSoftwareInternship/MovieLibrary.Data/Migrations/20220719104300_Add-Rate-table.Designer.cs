@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieLibrary.Data.Models;
 
@@ -11,9 +12,10 @@ using MovieLibrary.Data.Models;
 namespace MovieLibrary.Data.Migrations
 {
     [DbContext(typeof(MoviesDataBaseContext))]
-    partial class MoviesDataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220719104300_Add-Rate-table")]
+    partial class AddRatetable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -363,10 +365,6 @@ namespace MovieLibrary.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MovieId"), 1L, 1);
 
-                    b.Property<decimal>("AvgRate")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Caption")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -430,27 +428,34 @@ namespace MovieLibrary.Data.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
-                    b.Property<DateTime>("InsertDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rates")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("UserId");
 
+                    b.Property<string>("Rates")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("RateId");
 
-                    b.HasIndex("MovieId");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("Id");
 
                     b.ToTable("Rate");
+                });
+
+            modelBuilder.Entity("MovieRate", b =>
+                {
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("MovieId", "Id");
+
+                    b.HasIndex("Id");
+
+                    b.ToTable("MovieRate", (string)null);
                 });
 
             modelBuilder.Entity("MovieUser", b =>
@@ -562,21 +567,27 @@ namespace MovieLibrary.Data.Migrations
 
             modelBuilder.Entity("MovieLibrary.Data.Models.Rate", b =>
                 {
-                    b.HasOne("MovieLibrary.Data.Models.Movie", "Movie")
-                        .WithMany("Rates")
-                        .HasForeignKey("MovieId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Movie_Rate");
-
                     b.HasOne("MovieLibrary.Data.Models.ApplicationUser", "User")
                         .WithMany("Rates")
-                        .HasForeignKey("UserId")
-                        .IsRequired()
+                        .HasForeignKey("Id")
                         .HasConstraintName("FK_Users_Rate");
 
-                    b.Navigation("Movie");
-
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MovieRate", b =>
+                {
+                    b.HasOne("MovieLibrary.Data.Models.Rate", null)
+                        .WithMany()
+                        .HasForeignKey("Id")
+                        .IsRequired()
+                        .HasConstraintName("FK_MovieRates_Rates");
+
+                    b.HasOne("MovieLibrary.Data.Models.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .IsRequired()
+                        .HasConstraintName("FK_MovieRates_Movies");
                 });
 
             modelBuilder.Entity("MovieUser", b =>
@@ -595,11 +606,6 @@ namespace MovieLibrary.Data.Migrations
                 });
 
             modelBuilder.Entity("MovieLibrary.Data.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Rates");
-                });
-
-            modelBuilder.Entity("MovieLibrary.Data.Models.Movie", b =>
                 {
                     b.Navigation("Rates");
                 });

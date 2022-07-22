@@ -22,6 +22,7 @@ namespace MovieLibrary.Data.Models
         public virtual DbSet<Genre> Genres { get; set; } = null!;
         public virtual DbSet<Movie> Movies { get; set; } = null!;
         public virtual DbSet<Occupation> Occupations { get; set; } = null!;
+        public virtual DbSet<Rate> Rate { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -71,6 +72,7 @@ namespace MovieLibrary.Data.Models
                 entity.Property(e => e.Caption).HasMaxLength(50);
 
                 entity.Property(e => e.DeleteDate).HasColumnType("datetime");
+                entity.Property(e => e.AvgRate).HasPrecision(18, 2);
 
                 entity.Property(e => e.ImagePath)
                     .HasMaxLength(250)
@@ -139,6 +141,28 @@ namespace MovieLibrary.Data.Models
                 .HasForeignKey(d => d.OccupationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_Users");
+            });
+
+            modelBuilder.Entity<Rate>(entity =>
+            {
+                entity.HasKey(e => e.RateId);
+                entity.Property(e => e.Comment).HasMaxLength(300);
+                entity.Property(e => e.Rates);
+                entity.Property(e => e.UserId).HasColumnName("UserId");
+                entity.Property(e => e.InsertDate).HasColumnType("datetime").IsRequired();
+
+                entity.HasOne(d => d.User)
+                .WithMany(p => p.Rates)
+                .HasForeignKey(d=>d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Users_Rate");
+
+                entity.HasOne(d => d.Movie)
+                       .WithMany(p => p.Rates)
+                       .HasForeignKey(d => d.MovieId)
+                       .OnDelete(DeleteBehavior.ClientSetNull)
+                       .HasConstraintName("FK_Movie_Rate"); 
+
             });
             OnModelCreatingPartial(modelBuilder);
         }
